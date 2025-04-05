@@ -2,19 +2,28 @@
 
 #include <functional>
 #include <vector>
+#include <limits>
 
 class Point 
 {
     public:
-        Point(std::vector<int> position, std::vector<double> velocityVector);
-        void updateVelocity(float alpha, float beta, float epsilon1, float epsilon2, std::vector<int> globalBest);
-        void updatePoisiton(void);
-        void evalPoint(std::function<double(const std::vector<int>&)> funcToMinimize);
-
-        std::vector<int> _position;
-        std::vector<double> _velocityVector;
-        std::vector<int> _personalBest;
-        double _grade;
-    private:
+        Point(const std::vector<double>& position, const std::vector<double>& velocityVector);
+        void updateVelocity(float alpha, float beta, float epsilon1, float epsilon2, const std::vector<double>& globalBest);
+        void updatePosition(void);
+        void evalPoint(const std::function<double(const std::vector<double>&)>& funcToMinimize);
+        void enforceBounds(const std::pair<int, int>& bounds);
+        void clampVelocity(double maxVelocity);
         
+        const std::vector<double>& getPosition() const { return position; }
+        const std::vector<double>& getVelocityVector() const { return velocityVector; }
+        const std::vector<double>& getPersonalBest() const { return personalBest; }
+        double getGrade() const { return grade; }
+        bool hasBeenEvaluated() const { return evaluated; }
+
+    private:
+        std::vector<double> position;
+        std::vector<double> velocityVector;
+        std::vector<double> personalBest;
+        double grade = std::numeric_limits<double>::max();
+        bool evaluated = false;
 };

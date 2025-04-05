@@ -1,37 +1,58 @@
 #include "Point.h"
 #include <functional>
 #include <vector>
+#include <algorithm>
+#include <cmath>
 
-Point::Point(std::vector<int> startPos, std::vector<double> startVelocity)
+Point::Point(const std::vector<double>& startPos, const std::vector<double>& startVelocity)
     :
-    _position(startPos),
-    _velocityVector(startVelocity),
-    _personalBest(startPos)
+    position(startPos),
+    velocityVector(startVelocity),
+    personalBest(startPos)
     {}
 
-void Point::evalPoint(std::function<double(const std::vector<int>&)> funcToMinimize)
+void Point::evalPoint(const std::function<double(const std::vector<double>&)>& funcToMinimize)
 {
-    auto currentGrade = funcToMinimize(_position);
-    if (currentGrade < _grade) 
+    auto currentGrade = funcToMinimize(position);
+    evaluated = true;
+    
+    if (currentGrade < grade) 
     {
-        _personalBest = _position;
-        _grade = currentGrade;
+        personalBest = position;
+        grade = currentGrade;
     }
 }
 
-void Point::updatePoisiton(void)
+void Point::updatePosition(void)
 {
-    for(auto i = 0; i < _position.size(); i++)
+    for(size_t i = 0; i < position.size(); i++)
     {
-        _position[i] += _velocityVector[i];
+        position[i] += velocityVector[i];
     }
 }
 
-void Point::updateVelocity(float alpha, float beta, float epsilon1, float epsilon2, std::vector<int> globalBest)
+void Point::updateVelocity(float alpha, float beta, float epsilon1, float epsilon2, const std::vector<double>& globalBest)
 {
-    for(auto i = 0; i < _velocityVector.size(); i++)
+    for(size_t i = 0; i < velocityVector.size(); i++)
     {
-        _velocityVector[i] += (alpha * epsilon1 * (globalBest[i] - _position[i]) + 
-                               beta * epsilon2 * (_personalBest[i] - _position[i]));
+        velocityVector[i] += (alpha * epsilon1 * (globalBest[i] - position[i]) + 
+                             beta * epsilon2 * (personalBest[i] - position[i]));
+    }
+}
+
+void Point::enforceBounds(const std::pair<int, int>& bounds)
+{
+    for(size_t i = 0; i < position.size(); i++)
+    {
+        position[i] = std::max(static_cast<double>(bounds.first), 
+                     std::min(static_cast<double>(bounds.second), position[i]));
+    }
+}
+
+void Point::clampVelocity(double maxVelocity)
+{
+    for(size_t i = 0; i < velocityVector.size(); i++)
+    {
+        velocityVector[i] = std::max(-maxVelocity, std::min(maxVelocity, velocityVector[i]));
     }
 }
