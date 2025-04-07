@@ -1,5 +1,5 @@
 CXX := clang++
-CXXFLAGS := -Wall -Werror -std=c++17 -mavx2 - mavx512f
+CXXFLAGS := -Wall -Werror -std=c++17 -march=native
 LDFLAGS := 
 TARGET := bin/test
 
