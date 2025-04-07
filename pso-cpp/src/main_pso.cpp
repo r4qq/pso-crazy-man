@@ -39,7 +39,8 @@ int main()
         std::cout << "Time elapsed: " << std::get<2>(output).count() << " s." << std::endl; 
         std::cout << "****************" << std::endl;
     }
-    catch (const std::exception& e) {
+    catch (const std::exception& e) 
+    {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;
     }

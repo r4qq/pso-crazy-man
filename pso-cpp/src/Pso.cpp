@@ -117,21 +117,22 @@ std::tuple<std::vector<double>, double, std::chrono::duration<double>> Pso::opti
             _consecutiveUnchangedEpochs += 1;
             if (_consecutiveUnchangedEpochs >= _sameGradeEpochs) 
             {
-                std::cout << "Early termination after " << (i+1) << " epochs due to unchanged best value for " 
+                std::cout << "Early termination after " << (i + 1) << " epochs due to unchanged best value for " 
                           << _consecutiveUnchangedEpochs << " consecutive epochs." << std::endl;
                 break;
             }
         }
         
-        if ((i+1) % 10 == 0 || i == 0) {
-            std::cout << "Completed " << (i+1) << " epochs. Current best value: " << _globalBestVal << std::endl;
+        if ((i + 1) % 10 == 0 || i == 0) {
+            std::cout << "Completed " << (i + 1) << " epochs. Current best value: " << _globalBestVal << std::endl;
         }
     }
     
     auto endTime = std::chrono::high_resolution_clock::now();
     auto duration = endTime - startTime;
     
-    if (!_hasValidSolution) {
+    if (!_hasValidSolution) 
+    {
         throw std::runtime_error("No valid solution found during optimization");
     }
     
