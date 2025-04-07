@@ -1,5 +1,5 @@
 CXX := clang++
-CXXFLAGS := -Wall -Werror -std=c++17
+CXXFLAGS := -Wall -Werror -std=c++17 -mavx2 - mavx512f
 LDFLAGS := 
 TARGET := bin/test
 
@@ -19,10 +19,10 @@ all: normal
 debug: CXXFLAGS += -g -fsanitize=address,undefined,leak
 debug: $(TARGET)
 
-normal: CXXFLAGS += -O2 -mavx2
+normal: CXXFLAGS += -O2 
 normal: $(TARGET)
 
-fast: CXXFLAGS += -O3 -ffast-math -mavx2
+fast: CXXFLAGS += -O3 -ffast-math 
 fast: $(TARGET)
 
 $(TARGET): $(OBJS)
