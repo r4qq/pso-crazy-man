@@ -1,6 +1,24 @@
 #include <immintrin.h>
 #include "config.h"
 
+std::string getAvxCapabilities() 
+{
+    std::string result = "CPU supports: ";
+    
+    #ifdef __AVX512F__
+        result += "AVX-512F";
+    #elif defined(__AVX2__)
+        result += "AVX2";
+    #elif defined(__AVX__)
+        result += "AVX";
+    #else
+        result += "No AVX (using scalar operations)";
+    #endif
+    
+    return result;
+}
+
+
 #ifdef __AVX512F__
 void avx512VectorAdd(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
 {
