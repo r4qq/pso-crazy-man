@@ -25,6 +25,7 @@ class Pso
         
         std::tuple<std::vector<double>, double, std::chrono::duration<double>> optimize(void);
         void setMaxVelocity(double maxVel) { _maxVelocity = maxVel; }
+        int getRealPointDimensions() const {return _pointRealDimensions;}
         
     private:
         std::vector<Point> _initPoints(void);
@@ -36,6 +37,7 @@ class Pso
         int _epoch;
         int _pointsAmount;
         int _pointDimensions;
+        int _pointRealDimensions;
         std::pair<int, int> _bound;
         std::function<double(const std::vector<double>&)> _funcToMinimize;
         int _sameGradeEpochs;

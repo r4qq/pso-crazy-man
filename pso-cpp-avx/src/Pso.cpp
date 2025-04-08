@@ -1,5 +1,7 @@
 #include "Pso.h"
 #include "Point.h"
+#include "config.h"
+
 #include <iostream>
 #include <ostream>
 #include <random>
@@ -45,15 +47,35 @@ std::vector<Point> Pso::_initPoints(void)
     std::uniform_real_distribution<> distrVal(-1.0, 1.0);
     std::vector<Point> points;
     
+    _pointRealDimensions = _pointDimensions;
+
+
+    if(USINGAVX512F == 1 && USINGAVX2 == 0)
+    {
+        std::cout << "Using AVX512f, resizing to 8" << std::endl;
+        _pointDimensions += 8 - _pointRealDimensions % 8;
+    }
+    else if (USINGAVX512F == 0 && USINGAVX2 == 1)
+    {   
+        std::cout << "Using AVX2, resizing to 4" << std::endl;
+        _pointDimensions += 4 - _pointRealDimensions % 4;
+    }
+
+
+
     for (int i = 0; i < _pointsAmount; i++) 
     {
         std::vector<double> startPos;
         std::vector<double> velocityVector;
-        for (int j = 0; j < _pointDimensions; j++) 
+        for (int j = 0; j < _pointRealDimensions; j++) 
         {
             startPos.push_back(static_cast<double>(distrPoints(_randomEngine)));
             velocityVector.push_back(distrVal(_randomEngine) * _maxVelocity / 2.0); 
         }
+
+        startPos.resize(_pointDimensions, 0.0);
+        velocityVector.resize(_pointDimensions, 0.0);
+
         auto point = Point(startPos, velocityVector);
         point.evalPoint(_funcToMinimize);
         points.push_back(point);

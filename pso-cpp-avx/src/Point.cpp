@@ -1,4 +1,6 @@
 #include "Point.h"
+#include "config.h"
+
 #include <functional>
 #include <vector>
 #include <algorithm>
@@ -25,14 +27,17 @@ void Point::evalPoint(const std::function<double(const std::vector<double>&)>& f
 
 void Point::updatePosition(void)
 {
-    for(size_t i = 0; i < position.size(); i++)
-    {
-        position[i] += velocityVector[i];
-    }
+    avxVectorAdd(position, velocityVector, position);
 }
 
 void Point::updateVelocity(float alpha, float beta, float epsilon1, float epsilon2, const std::vector<double>& globalBest)
 {
+    std::vector<double> globalSubPos(position.size());
+    std::vector<double> personalSubPos(position.size());
+
+    avxVectorSub(globalBest, position, globalSubPos);
+    avxVectorSub(personalBest, position, personalSubPos);
+
     for(size_t i = 0; i < velocityVector.size(); i++)
     {
         velocityVector[i] += (alpha * epsilon1 * (globalBest[i] - position[i]) + 
