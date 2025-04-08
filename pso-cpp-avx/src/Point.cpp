@@ -1,5 +1,5 @@
 #include "Point.h"
-#include "config.h"
+#include "avxoperations.h"
 
 #include <functional>
 #include <vector>

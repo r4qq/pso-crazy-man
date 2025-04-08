@@ -1,6 +1,6 @@
 #include "Pso.h"
 #include "Point.h"
-#include "config.h"
+#include "avxoperations.h"
 
 #include <iostream>
 #include <ostream>
