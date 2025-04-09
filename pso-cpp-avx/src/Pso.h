@@ -34,6 +34,8 @@ class Pso
 
         float _alpha;
         float _beta;
+        std::vector<double> _alphaVector;
+        std::vector<double> _betaVector;
         int _epoch;
         int _pointsAmount;
         int _pointDimensions;

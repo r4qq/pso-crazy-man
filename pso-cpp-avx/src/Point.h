@@ -8,7 +8,7 @@ class Point
 {
     public:
         Point(const std::vector<double>& position, const std::vector<double>& velocityVector);
-        void updateVelocity(float alpha, float beta, float epsilon1, float epsilon2, const std::vector<double>& globalBest);
+        void updateVelocity(const std::vector<double>& alphaVector, const std::vector<double>& betaVector, const std::vector<double>& epsilon1Vector, const std::vector<double>& epsilon2Vector, const std::vector<double>& globalBest);
         void updatePosition(void);
         void evalPoint(const std::function<double(const std::vector<double>&)>& funcToMinimize);
         void enforceBounds(const std::pair<int, int>& bounds);

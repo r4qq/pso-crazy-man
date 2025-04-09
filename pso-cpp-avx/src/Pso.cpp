@@ -34,7 +34,8 @@ Pso::Pso(
         _consecutiveUnchangedEpochs(consecutiveUnchangedEpochs),
         _randomEngine(std::random_device{}())
     {
-        if (_sameGradeEpochs <= 0) {
+        if (_sameGradeEpochs <= 0) 
+        {
             _sameGradeEpochs = _epoch / 10; 
         }
         
@@ -47,9 +48,8 @@ std::vector<Point> Pso::_initPoints(void)
     std::uniform_real_distribution<> distrVal(-1.0, 1.0);
     std::vector<Point> points;
     
+    
     _pointRealDimensions = _pointDimensions;
-
-
     if(USINGAVX512F == 1 && USINGAVX2 == 0)
     {
         std::cout << "Using AVX512f, resizing to 8" << std::endl;
@@ -60,7 +60,10 @@ std::vector<Point> Pso::_initPoints(void)
         std::cout << "Using AVX2, resizing to 4" << std::endl;
         _pointDimensions += 4 - _pointRealDimensions % 4;
     }
+  
 
+    _alphaVector = std::vector<double>(_pointDimensions, _alpha);
+    _betaVector = std::vector<double>(_pointDimensions, _beta);
 
 
     for (int i = 0; i < _pointsAmount; i++) 
@@ -70,7 +73,7 @@ std::vector<Point> Pso::_initPoints(void)
         for (int j = 0; j < _pointRealDimensions; j++) 
         {
             startPos.push_back(static_cast<double>(distrPoints(_randomEngine)));
-            velocityVector.push_back(distrVal(_randomEngine) * _maxVelocity / 2.0); 
+            velocityVector.push_back(distrVal(_randomEngine) * _maxVelocity / 2.0);
         }
 
         startPos.resize(_pointDimensions, 0.0);
@@ -107,10 +110,14 @@ bool Pso::updateGlobalBest(void)
 std::tuple<std::vector<double>, double, std::chrono::duration<double>> Pso::optimize(void)
 {
     auto optimized = updateGlobalBest();
-    if (!_globalBestPos.has_value()) {
+    if (!_globalBestPos.has_value()) 
+    {
         throw std::runtime_error("Failed to initialize global best position");
     }
     
+    std::vector<double> epsilon1Vector;
+    std::vector<double> epsilon2Vector;
+
     std::cout << "Starting optimization" << std::endl;
     auto startTime = std::chrono::high_resolution_clock::now();
     
@@ -118,10 +125,10 @@ std::tuple<std::vector<double>, double, std::chrono::duration<double>> Pso::opti
     {
         for(auto& point : _points)
         {
-            const auto epsilon1 = getRandomDouble(0.0, 1.0); 
-            const auto epsilon2 = getRandomDouble(0.0, 1.0);
-             
-            point.updateVelocity(_alpha, _beta, epsilon1, epsilon2, *_globalBestPos);
+            epsilon1Vector = std::vector<double>(_pointDimensions, getRandomDouble(0.0, 1.0));
+            epsilon2Vector = std::vector<double>(_pointDimensions, getRandomDouble(0.0, 1.0));
+
+            point.updateVelocity(_alphaVector, _betaVector, epsilon1Vector, epsilon2Vector, *_globalBestPos);
             point.clampVelocity(_maxVelocity);
             point.updatePosition();
             point.enforceBounds(_bound);

@@ -30,19 +30,20 @@ void Point::updatePosition(void)
     avxVectorAdd(position, velocityVector, position);
 }
 
-void Point::updateVelocity(float alpha, float beta, float epsilon1, float epsilon2, const std::vector<double>& globalBest)
+void Point::updateVelocity(const std::vector<double>& alphaVector, const std::vector<double>& betaVector, const std::vector<double>& epsilon1Vector, const std::vector<double>& epsilon2Vector, const std::vector<double>& globalBest)
 {
-    std::vector<double> globalSubPos(position.size());
-    std::vector<double> personalSubPos(position.size());
+    std::vector<double> tempVector(position.size());
+    
 
-    avxVectorSub(globalBest, position, globalSubPos);
-    avxVectorSub(personalBest, position, personalSubPos);
+    avxVectorSub(globalBest, position, tempVector);
+    avxVectorMul(tempVector, epsilon1Vector, tempVector);
+    avxVectorMul(tempVector, alphaVector, tempVector);
+    avxVectorAdd(velocityVector, tempVector, velocityVector);
 
-    for(size_t i = 0; i < velocityVector.size(); i++)
-    {
-        velocityVector[i] += (alpha * epsilon1 * (globalBest[i] - position[i]) + 
-                             beta * epsilon2 * (personalBest[i] - position[i]));
-    }
+    avxVectorSub(personalBest, position, tempVector);
+    avxVectorMul(tempVector, epsilon2Vector, tempVector);
+    avxVectorMul(tempVector, betaVector, tempVector);
+    avxVectorAdd(velocityVector, tempVector, velocityVector);
 }
 
 void Point::enforceBounds(const std::pair<int, int>& bounds)
