@@ -4,14 +4,15 @@ Done in:
 
  - python
  - cpp
+ - cpp with AVX
+
 
 In progress
 
- - cpp with AVX
+ - zig
 
 Planned implementations:
 
- - zig
  - bend
  - rust (?)
  - odin (?)
