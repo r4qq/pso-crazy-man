@@ -19,7 +19,7 @@ std::string getAvxCapabilities()
 }
 
 #if defined(__AVX512F__)
-void avxVectorAdd(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
+inline void avxVectorAdd(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
 {
     size_t vecSize = vA.size();
     for (size_t i = 0; i < vecSize; i += 8) 
@@ -31,7 +31,7 @@ void avxVectorAdd(const std::vector<double>& vA, const std::vector<double>& vB, 
     }
 }
 
-void avxVectorSub(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
+inline void avxVectorSub(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
 {
     size_t vecSize = vA.size();
     for (size_t i = 0; i < vecSize; i += 8) 
@@ -43,7 +43,7 @@ void avxVectorSub(const std::vector<double>& vA, const std::vector<double>& vB, 
     }
 }
 
-void avxVectorMul(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
+inline void avxVectorMul(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
 {
     size_t vecSize = vA.size();
     for (size_t i = 0; i < vecSize; i += 8) 
@@ -57,7 +57,7 @@ void avxVectorMul(const std::vector<double>& vA, const std::vector<double>& vB, 
 
 
 #elif defined(__AVX2__)
-void avxVectorAdd(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
+inline void avxVectorAdd(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
 {
     size_t vecSize = vA.size();
     for (size_t i = 0; i < vecSize; i += 8) 
@@ -69,7 +69,7 @@ void avxVectorAdd(const std::vector<double>& vA, const std::vector<double>& vB, 
     }
 }
 
-void avxVectorSub(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
+inline void avxVectorSub(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
 {
     size_t vecSize = vA.size();
     for (size_t i = 0; i < vecSize; i += 8) 
@@ -81,7 +81,7 @@ void avxVectorSub(const std::vector<double>& vA, const std::vector<double>& vB, 
     }
 }
 
-void avxVectorMul(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
+inline void avxVectorMul(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
 {
      size_t vecSize = vA.size();
     for (size_t i = 0; i < vecSize; i += 8) 
@@ -94,7 +94,7 @@ void avxVectorMul(const std::vector<double>& vA, const std::vector<double>& vB, 
 }
 
 #else
-void avxVectorAdd(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
+inline void avxVectorAdd(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
 {
     size_t vecSize = vA.size();
     for (size_t i = 0; i < vecSize; ++i) 
@@ -103,7 +103,7 @@ void avxVectorAdd(const std::vector<double>& vA, const std::vector<double>& vB, 
     }
 }
 
-void avxVectorSub(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
+inline void avxVectorSub(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
 {
     size_t vecSize = vA.size();
     for (size_t i = 0; i < vecSize; ++i) 
@@ -112,7 +112,7 @@ void avxVectorSub(const std::vector<double>& vA, const std::vector<double>& vB, 
     }
 }
 
-void avxVectorMul(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
+inline void avxVectorMul(const std::vector<double>& vA, const std::vector<double>& vB, std::vector<double>& vResult) 
 {
     size_t vecSize = vA.size();
     for (size_t i = 0; i < vecSize; ++i) 
