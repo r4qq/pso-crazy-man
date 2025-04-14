@@ -3,37 +3,40 @@ import math
 import matplotlib.pyplot as plt
 import time
 
+from typing import List, Callable
+
 EPOCH = 50
 POINTSAMOUNT = 200000
-BOUND = [-10, 10]
+BOUND = [-10.0, 10.0]
 ALPHA = 0.5
 BETA = 0.3
 
 class Point:
-    def __init__(self, position, velocityVector):
+    def __init__(self, position: List[float], velocityVector: List[float]) -> None:
         self.position = position
         self.velocityVector = velocityVector
         self.personalBest = position
         self.grade = float('inf')
 
-    def updateVelocity(self, alpha, beta, globalBest):
+    def updateVelocity(self, alpha: float, beta: float, globalBest: List[float]) -> None:
         epsilon1, epsilon2 = random.random(), random.random()
         for i in range(len(self.velocityVector)):
             self.velocityVector[i] += (alpha * epsilon1 * (globalBest[i] - self.position[i]) +
                                         beta * epsilon2 * (self.personalBest[i] - self.position[i]))
 
-    def updatePosition(self):
+    def updatePosition(self) -> None:
         for i in range(len(self.position)):
             self.position[i] += self.velocityVector[i]
 
-    def evalPoint(self, func):
+    def evalPoint(self, func: Callable) -> None:
         currentGrade = func(self.position)
         if currentGrade < self.grade:  
             self.personalBest = self.position
             self.grade = currentGrade  
 
 class Algo:
-    def __init__(self, epoch, pointsAmount, bound, alpha, beta, funcToMinimize, sameGradepochs=15):
+    def __init__(self, epoch: int, pointsAmount: int, bound: List[float],
+                       alpha: float, beta: float, funcToMinimize: Callable, sameGradepochs: int) -> None:
         self.epoch = epoch
         self.pointsAmount = pointsAmount
         self.bound = bound
@@ -47,7 +50,7 @@ class Algo:
         self.bestGradesHistory = []
         self.consecutiveUnchangedEpochs = 0
 
-    def _initPoints(self):
+    def _initPoints(self) -> None:
         points = []
         for _ in range(self.pointsAmount):
             startPos = [random.uniform(self.bound[0], self.bound[1]) for _ in range(2)]
@@ -57,7 +60,7 @@ class Algo:
             points.append(point)
         return points
 
-    def _updateGlobalBest(self):
+    def _updateGlobalBest(self) -> bool:
         tempPoint = min(self.points, key=lambda p: p.grade)
         if tempPoint.grade < self.globalBestVal:
             self.globalBestVal = tempPoint.grade
@@ -65,7 +68,7 @@ class Algo:
             return True
         return False
 
-    def optimize(self):
+    def optimize(self) -> tuple:
         startTime = time.time()
 
         for eepoch in range(self.epoch):
@@ -93,7 +96,7 @@ if __name__ == "__main__":
         x, y = vars
         return math.sin(x**4) - math.cos(y**2) + 6 * (x**2) * (y**2)
 
-    pso = Algo(EPOCH, POINTSAMOUNT, BOUND, ALPHA, BETA, funcToMinimize)
+    pso = Algo(EPOCH, POINTSAMOUNT, BOUND, ALPHA, BETA, funcToMinimize, 15)
     bestPos, bestVal = pso.optimize()
 
     print("-------------")
