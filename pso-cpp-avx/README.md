@@ -1,6 +1,7 @@
 Testing vector procesing with AVX.
 XD.
+[original](https://github.com/r4qq/pso-crazy-man/tree/main/pso-cpp) one.
 
 TODO: 
-    done, it's slower than the [original](https://github.com/r4qq/pso-crazy-man/tree/main/pso-cpp) one.
+    still slower, custom allocator maybe??? (missalligned memory acess????) need to delve into templates
          
