@@ -1,4 +1,5 @@
 #include "Pso.h"
+
 #include <cmath>
 #include <cstddef>
 #include <iostream>
@@ -8,7 +9,7 @@
 
 constexpr int EPOCH = 100;
 constexpr int POINTSAMOUNT = 2000;
-constexpr std::pair<int, int> BOUND = {-10, 10};
+constexpr std::pair<double , double> BOUND = {-10.0, 10.0};
 constexpr float ALPHA = 0.5;
 constexpr float BETA = 0.3; 
 constexpr int POINTDIMENSION = 8; //set to 2 for func1, to 4 for func2, 8 fo func3
@@ -67,7 +68,7 @@ int main()
         
         std::cout << "****************" << std::endl;
         std::cout << "Best position: " << std::endl;
-        for (size_t i = 0; i < pso.getRealPointDimensions(); i++) 
+        for (size_t i = 0; i < POINTDIMENSION; i++) 
         {
             std::cout << std::get<0>(output)[i] << " ";
         }

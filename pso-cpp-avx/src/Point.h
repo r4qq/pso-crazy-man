@@ -3,12 +3,13 @@
 #include <functional>
 #include <vector>
 #include <limits>
+#include <stdexcept>
 
 class Point 
 {
     public:
         Point(const std::vector<double>& position, const std::vector<double>& velocityVector);
-        void updateVelocity(const std::vector<double>& alphaVector, const std::vector<double>& betaVector, const std::vector<double>& epsilon1Vector, const std::vector<double>& epsilon2Vector, const std::vector<double>& globalBest);
+        void updateVelocity(double alpha, double beta, double epsilon1, double epsilon2, const std::vector<double>& globalBest);
         void updatePosition(void);
         void evalPoint(const std::function<double(const std::vector<double>&)>& funcToMinimize);
         void enforceBounds(const std::pair<int, int>& bounds);
