@@ -13,7 +13,7 @@ constexpr std::pair<double , double> BOUND = {-10.0, 10.0};
 constexpr float ALPHA = 0.5;
 constexpr float BETA = 0.3; 
 constexpr int POINTDIMENSION = 8; //set to 2 for func1, to 4 for func2, 8 fo func3
-constexpr int SAME_GRADE_EPOCHS = 20; 
+constexpr int SAME_GRADE_EPOCHS = 10; 
 
 int main()
 {

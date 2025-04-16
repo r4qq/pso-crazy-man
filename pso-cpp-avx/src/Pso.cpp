@@ -50,16 +50,23 @@ std::vector<Point> Pso::_initPoints(void)
     std::uniform_real_distribution<> distrVal(-1.0, 1.0);
     
     std::vector<Point> points;
-    points.reserve(_pointsAmount);
+    points.reserve(_pointsAmount * _pointDimensions);
 
     std::string message = "CPU supports: ";
 
     _pointRealDimensions = _pointDimensions;
+    
     #ifdef __AVX512F__
-        _pointDimensions += (8 - _pointRealDimensions % 8) % 8;
-        message += "AVX-512F";
+        if (_pointRealDimensions % 8 != 0) 
+        {
+            _pointDimensions = ((_pointRealDimensions + 7) / 8) * 8; // Pad to next multiple of 8
+        }
+    message += "AVX-512F";
     #elif defined(__AVX2__)
-        _pointDimensions += (4 - _pointRealDimensions % 4) % 4;
+        if (_pointRealDimensions % 4 != 0) 
+        {
+            _pointDimensions = ((_pointRealDimensions + 3) / 4) * 4; // Pad to next multiple of 4
+        }
         message += "AVX2";
     #else
         message += "No AVX (using scalar operations)";

@@ -164,7 +164,6 @@ void Point::clampVelocity(double maxVelocity)
             _mm512_storeu_pd(velocityVector.data() + i, vel);
         }
     #elif defined(__AVX2__)
-        size_t i = 0;
         __m256d minVec = _mm256_set1_pd(minVel);
         __m256d maxVec = _mm256_set1_pd(maxVelocity);
 
