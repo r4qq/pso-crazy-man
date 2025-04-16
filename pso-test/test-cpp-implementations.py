@@ -34,7 +34,7 @@ def run_implementation(folder: str, executable: str, runs: int) -> List[float]:
     return runtimes
 
 def main():
-    folders = ["./pso-cpp", "./pso-cpp-avx"]
+    folders = ["../pso-cpp", "../pso-cpp-avx"]
     executable = "./bin/test"
     num_runs = 20
 
@@ -53,8 +53,8 @@ def main():
             print(f"\n{folder} No successful runs")
 
     if len(results) == 2:
-        scalar_avg = results["./pso-cpp"]["average"]
-        avx_avg = results["./pso-cpp-avx"]["average"]
+        scalar_avg = results["../pso-cpp"]["average"]
+        avx_avg = results["../pso-cpp-avx"]["average"]
         print("\nComparison:")
         print(f"Scalar Average: {scalar_avg:.6f} s")
         print(f"AVX Average: {avx_avg:.6f} s")
