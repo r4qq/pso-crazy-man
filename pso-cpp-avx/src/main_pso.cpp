@@ -1,4 +1,5 @@
 #include "Pso.h"
+#include "CustomAllocator.h"
 
 #include <cmath>
 #include <cstddef>
@@ -64,7 +65,7 @@ int main()
         auto pso = Pso(ALPHA, BETA, EPOCH, POINTSAMOUNT, POINTDIMENSION, BOUND, func3, SAME_GRADE_EPOCHS, 0);
         pso.setMaxVelocity((BOUND.second - BOUND.first) / 5.0); 
         
-        std::tuple<std::vector<double>, double, std::chrono::duration<double>> output = pso.optimize();
+        std::tuple<std::vector<double, CustomAllocator<double>>, double, std::chrono::duration<double>> output = pso.optimize();
         
         std::cout << "****************" << std::endl;
         std::cout << "Best position: " << std::endl;

@@ -1,7 +1,7 @@
 #include "Pso.h"
 #include "Point.h"
+#include "CustomAllocator.h"
 
-#include <climits>
 #include <cstddef>
 #include <iostream>
 #include <ostream>
@@ -20,7 +20,7 @@ Pso::Pso(
     int pointsAmount,
     int pointDimensions,
     std::pair<double, double> bound,
-    const std::function<double(const std::vector<double>&)>& funcToMinimize,
+    const std::function<double(const std::vector<double, CustomAllocator<double>>&)>& funcToMinimize,
     int sameGradeEpochs,
     int consecutiveUnchangedEpochs
     )
@@ -44,13 +44,13 @@ Pso::Pso(
         _points = _initPoints();
     }
 
-std::vector<Point> Pso::_initPoints(void)
+std::vector<Point, CustomAllocator<Point>> Pso::_initPoints(void)
 {
     std::uniform_int_distribution<> distrPoints(_bound.first, _bound.second);
     std::uniform_real_distribution<> distrVal(-1.0, 1.0);
     
-    std::vector<Point> points;
-    points.reserve(_pointsAmount * _pointDimensions);
+    std::vector<Point, CustomAllocator<Point>> points;
+    points.reserve(_pointsAmount);
 
     std::string message = "CPU supports: ";
 
@@ -78,8 +78,8 @@ std::vector<Point> Pso::_initPoints(void)
     for (int i = 0; i < _pointsAmount; i++) 
     {
         
-        std::vector<double> startPos;
-        std::vector<double> velocityVector;
+        std::vector<double, CustomAllocator<double>> startPos;
+        std::vector<double, CustomAllocator<double>> velocityVector;
         for (int j = 0; j < _pointRealDimensions; j++) 
         {
             startPos.push_back(static_cast<double>(distrPoints(_randomEngine)));
@@ -117,7 +117,7 @@ bool Pso::updateGlobalBest(void)
     return false;
 }
 
-std::tuple<std::vector<double>, double, std::chrono::duration<double>> Pso::optimize(void)
+std::tuple<std::vector<double, CustomAllocator<double>>, double, std::chrono::duration<double>> Pso::optimize(void)
 {
     auto optimized = updateGlobalBest();
     if (!_globalBestPos.has_value()) 
@@ -155,15 +155,8 @@ std::tuple<std::vector<double>, double, std::chrono::duration<double>> Pso::opti
             _consecutiveUnchangedEpochs += 1;
             if (_consecutiveUnchangedEpochs >= _sameGradeEpochs) 
             {
-                std::cout << "Early termination after " << (i + 1) << " epochs due to unchanged best value for " 
-                          << _consecutiveUnchangedEpochs << " consecutive epochs." << std::endl;
                 break;
             }
-        }
-        
-        if ((i + 1) % 10 == 0 || i == 0) 
-        {
-            std::cout << "Completed " << (i + 1) << " epochs. Current best value: " << _globalBestVal << std::endl;
         }
     }
     

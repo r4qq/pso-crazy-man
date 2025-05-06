@@ -3,7 +3,6 @@
 #include <functional>
 #include <vector>
 #include <algorithm>
-#include <cmath>
 
 Point::Point(const std::vector<double>& startPos, const std::vector<double>& startVelocity)
     :
