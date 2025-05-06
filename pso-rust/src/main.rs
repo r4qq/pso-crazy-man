@@ -1,7 +1,7 @@
 #![allow(non_snake_case)] //disabling damn snake case warnings
 
 mod point;
-use point::Point;
+
 fn main() 
 {
     let EPOCH = 100;

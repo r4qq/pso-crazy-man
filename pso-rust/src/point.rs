@@ -1,3 +1,5 @@
+use std::sync::PoisonError;
+
 pub struct Point 
 {
     position: Vec<f64>,
@@ -19,6 +21,18 @@ impl Point
             evaluated: false,
         }
     }    
+
+    pub fn evalPoint(&mut self, func: &dyn Fn(Vec<f64>) -> f64)
+    {
+        let currentGrade = func(self.position.clone());
+        self.evaluated = true;
+
+        if currentGrade < self.grade 
+        {
+            self.personalBest = self.position.clone();
+            self.grade = currentGrade;    
+        }
+    }
 
     pub fn updatePosition(&mut self)
     {

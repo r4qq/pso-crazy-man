@@ -9,10 +9,8 @@ Done in:
 
 In progress
 
- - zig
+ - rust
 
 Planned implementations:
 
- - bend
- - rust (?)
  - odin (?)
