@@ -1,4 +1,3 @@
-use std::sync::PoisonError;
 
 pub struct Point 
 {
