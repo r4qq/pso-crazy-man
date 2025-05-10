@@ -5,7 +5,6 @@ pub struct Point
     velocityVector: Vec<f64>,
     personalBest: Vec<f64>,
     grade: f64,
-    evaluated: bool,
 }
 
 impl Point 
@@ -15,16 +14,14 @@ impl Point
         Point {
             position: startPos.clone(),
             velocityVector: startVelocity,
-            personalBest: startPos.clone(),
+            personalBest: startPos,
             grade: f64::MAX,
-            evaluated: false,
         }
     }    
 
-    pub fn evalPoint(&mut self, func: &dyn Fn(Vec<f64>) -> f64)
+    pub fn evalPoint(&mut self, func: &dyn Fn(&[f64]) -> f64)
     {
-        let currentGrade = func(self.position.clone());
-        self.evaluated = true;
+        let currentGrade = func(&self.position);
 
         if currentGrade < self.grade 
         {
@@ -35,9 +32,9 @@ impl Point
 
     pub fn updatePosition(&mut self)
     {
-        for i in 0..self.position.len()
+        for (pos, vel) in self.position.iter_mut().zip(self.velocityVector.iter())
         {
-            self.position[i] += self.velocityVector[i];
+            *pos += *vel;
         }
     }
 
@@ -45,8 +42,8 @@ impl Point
     {
         for i in 0..self.velocityVector.len()
         {
-            self.velocityVector[i] += (alpha * epsilon1 * (globalBest[i] - self.position[i]) + 
-                                       beta * epsilon2 * (self.personalBest[i] - self.position[i]));
+            self.velocityVector[i] += alpha * epsilon1 * (globalBest[i] - self.position[i]) + 
+                                      beta * epsilon2 * (self.personalBest[i] - self.position[i]);
         }
     }
 
@@ -57,4 +54,4 @@ impl Point
             self.position[i] = bounds.0.max(bounds.1.min(self.position[i]));
         }
     }
-}
+}  
