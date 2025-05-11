@@ -44,8 +44,8 @@ class Pso
         std::pair<double, double> _bound;
         std::function<double(const std::vector<double, CustomAllocator<double>>&)> _funcToMinimize;
         int _sameGradeEpochs;
-        std::vector<Point> _points;
-        std::optional<std::vector<double>> _globalBestPos;
+        std::vector<Point, CustomAllocator<Point>> _points;
+        std::optional<std::vector<double, CustomAllocator<double>>> _globalBestPos;
         double _globalBestVal = std::numeric_limits<double>::max();
         int _consecutiveUnchangedEpochs;
         std::mt19937 _randomEngine;

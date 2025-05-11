@@ -171,7 +171,7 @@ std::tuple<std::vector<double, CustomAllocator<double>>, double, std::chrono::du
     return {*_globalBestPos, _globalBestVal, duration};
 }
 
-double Pso::getRandomDouble(double min, double max) 
+inline double Pso::getRandomDouble(double min, double max) 
 {
     std::uniform_real_distribution<double> distribution(min, max);
     return distribution(_randomEngine);

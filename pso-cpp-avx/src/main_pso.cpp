@@ -40,7 +40,7 @@ int main()
     };
 */
 
-    auto func3 = [](const std::vector<double>& vars) -> double 
+    auto func3 = [](const std::vector<double, CustomAllocator<double>>& vars) -> double 
     {
         double x1 = vars[0];
         double x2 = vars[1];
