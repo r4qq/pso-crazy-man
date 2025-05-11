@@ -5,7 +5,7 @@ XD.
 So i've written simple custom allocator to allocate alligned memory for the avx instructions.
 Heavily "inspired" by [this](https://github.com/zhourrr/aligned-memory-allocator/blob/main/aligned_allocator.h).
          
-```console
+```cpp
 #pragma once
 
 #include <cstddef> 
