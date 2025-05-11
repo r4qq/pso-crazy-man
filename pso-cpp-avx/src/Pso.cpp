@@ -1,6 +1,6 @@
 #include "Pso.h"
 #include "Point.h"
-#include "CustomAllocator.h"
+#include "CustomAllignedAllocator.h"
 
 #include <cstddef>
 #include <iostream>
@@ -9,7 +9,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <algorithm>
 #include <chrono>
 #include <stdexcept>
 
@@ -20,7 +19,7 @@ Pso::Pso(
     int pointsAmount,
     int pointDimensions,
     std::pair<double, double> bound,
-    const std::function<double(const std::vector<double, CustomAllocator<double>>&)>& funcToMinimize,
+    const std::function<double(const std::vector<double, CustomAllignedAllocator<double>>&)>& funcToMinimize,
     int sameGradeEpochs,
     int consecutiveUnchangedEpochs
     )
@@ -44,12 +43,12 @@ Pso::Pso(
         _points = _initPoints();
     }
 
-std::vector<Point, CustomAllocator<Point>> Pso::_initPoints(void)
+std::vector<Point, CustomAllignedAllocator<Point>> Pso::_initPoints(void)
 {
     std::uniform_int_distribution<> distrPoints(_bound.first, _bound.second);
     std::uniform_real_distribution<> distrVal(-1.0, 1.0);
     
-    std::vector<Point, CustomAllocator<Point>> points;
+    std::vector<Point, CustomAllignedAllocator<Point>> points;
     points.reserve(_pointsAmount);
 
     std::string message = "CPU supports: ";
@@ -78,8 +77,8 @@ std::vector<Point, CustomAllocator<Point>> Pso::_initPoints(void)
     for (int i = 0; i < _pointsAmount; i++) 
     {
         
-        std::vector<double, CustomAllocator<double>> startPos;
-        std::vector<double, CustomAllocator<double>> velocityVector;
+        std::vector<double, CustomAllignedAllocator<double>> startPos;
+        std::vector<double, CustomAllignedAllocator<double>> velocityVector;
         for (int j = 0; j < _pointRealDimensions; j++) 
         {
             startPos.push_back(static_cast<double>(distrPoints(_randomEngine)));
@@ -117,7 +116,7 @@ bool Pso::updateGlobalBest(void)
     return false;
 }
 
-std::tuple<std::vector<double, CustomAllocator<double>>, double, std::chrono::duration<double>> Pso::optimize(void)
+std::tuple<std::vector<double, CustomAllignedAllocator<double>>, double, std::chrono::duration<double>> Pso::optimize(void)
 {
     auto optimized = updateGlobalBest();
     if (!_globalBestPos.has_value()) 

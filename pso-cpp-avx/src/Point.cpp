@@ -7,8 +7,8 @@
 #include <algorithm>
 #include <stdexcept>
 
-Point::Point(const std::vector<double, CustomAllocator<double>>& startPos, 
-             const std::vector<double, CustomAllocator<double>>& startVelocity)
+Point::Point(const std::vector<double, CustomAllignedAllocator<double>>& startPos, 
+             const std::vector<double, CustomAllignedAllocator<double>>& startVelocity)
     :
     position(startPos),
     velocityVector(startVelocity),
@@ -21,7 +21,7 @@ Point::Point(const std::vector<double, CustomAllocator<double>>& startPos,
     }
 
 void Point::evalPoint(const std::function<double(const std::vector<double,
-                      CustomAllocator<double>>&)>& funcToMinimize)
+                      CustomAllignedAllocator<double>>&)>& funcToMinimize)
 {
     auto currentGrade = funcToMinimize(position);
     evaluated = true;
@@ -61,7 +61,7 @@ void Point::updatePosition()
 }
 
 void Point::updateVelocity(double alpha, double beta, double epsilon1, double epsilon2, 
-                           const std::vector<double, CustomAllocator<double>>& globalBest)
+                           const std::vector<double, CustomAllignedAllocator<double>>& globalBest)
 {
    #ifdef __AVX512F__
     __m512d eps1Vec = _mm512_set1_pd(epsilon1);

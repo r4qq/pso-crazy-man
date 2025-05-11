@@ -4,13 +4,13 @@
 #include <cstdlib>
 
 template <typename T>
-class CustomAllocator 
+class CustomAllignedAllocator 
 {
     public:
         using value_type = T;
 
-        CustomAllocator() = default;
-        template<typename U> CustomAllocator(CustomAllocator<U>&) {};
+        CustomAllignedAllocator() = default;
+        template<typename U> CustomAllignedAllocator(CustomAllignedAllocator<U>&) {};
         T* allocate(size_t n)
         {
             return static_cast<T*>(std::aligned_alloc(alignof(T), n * sizeof(T)));
@@ -22,8 +22,8 @@ class CustomAllocator
         }
 
         template <typename U>
-        bool operator==(const CustomAllocator<U>&) const noexcept { return true; }
+        bool operator==(const CustomAllignedAllocator<U>&) const noexcept { return true; }
     
         template <typename U>
-        bool operator!=(const CustomAllocator<U>&) const noexcept { return false; }
+        bool operator!=(const CustomAllignedAllocator<U>&) const noexcept { return false; }
 };
