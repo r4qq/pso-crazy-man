@@ -1,11 +1,13 @@
-#include "Point.h"
-#include "CustomAllignedAllocator.h"
+#include "Point.hpp"
+#include "CustomAllignedAllocator.hpp"
 
 #include <immintrin.h>
 #include <functional>
 #include <vector>
 #include <algorithm>
 #include <stdexcept>
+
+#define guwno std::cout << "tutaj";
 
 Point::Point(const std::vector<double, CustomAllignedAllocator<double>>& startPos, 
              const std::vector<double, CustomAllignedAllocator<double>>& startVelocity)
@@ -71,11 +73,11 @@ void Point::updateVelocity(double alpha, double beta, double epsilon1, double ep
     
     for (size_t i = 0; i < position.size(); i += 8)
     {
-        __m512d pos = _mm512_loadu_pd(position.data() + i);
-        __m512d vel = _mm512_loadu_pd(velocityVector.data() + i);
-        __m512d gBest = _mm512_loadu_pd(globalBest.data() + i);
-        __m512d pBest = _mm512_loadu_pd(personalBest.data() + i);
-       
+        __m512d pos = _mm512_load_pd(position.data() + i);
+        __m512d vel = _mm512_load_pd(velocityVector.data() + i);
+        __m512d gBest = _mm512_load_pd(globalBest.data() + i);
+        __m512d pBest = _mm512_load_pd(personalBest.data() + i);
+
 
         __m512d diffGlobal = _mm512_sub_pd(gBest, pos);
         __m512d diffPersonal = _mm512_sub_pd(pBest, pos);
@@ -85,7 +87,7 @@ void Point::updateVelocity(double alpha, double beta, double epsilon1, double ep
         __m512d scaledTerm2 = _mm512_mul_pd(term2, betaVec);
         __m512d update = _mm512_add_pd(scaledTerm1, scaledTerm2);
         vel = _mm512_add_pd(vel, update);
-        _mm512_storeu_pd(velocityVector.data() + i, vel);
+        _mm512_store_pd(velocityVector.data() + i, vel);
     }
     
     #elif defined(__AVX2__)
@@ -96,10 +98,10 @@ void Point::updateVelocity(double alpha, double beta, double epsilon1, double ep
 
         for (size_t i = 0; i < position.size(); i += 4) 
         {
-            __m256d pos = _mm256_loadu_pd(position.data() + i);
-            __m256d vel = _mm256_loadu_pd(velocityVector.data() + i);
-            __m256d gBest = _mm256_loadu_pd(globalBest.data() + i);
-            __m256d pBest = _mm256_loadu_pd(personalBest.data() + i);
+            __m256d pos = _mm256_load_pd(position.data() + i);
+            __m256d vel = _mm256_load_pd(velocityVector.data() + i);
+            __m256d gBest = _mm256_load_pd(globalBest.data() + i);
+            __m256d pBest = _mm256_load_pd(personalBest.data() + i);
         
             __m256d diffGlobal = _mm256_sub_pd(gBest, pos);
             __m256d diffPersonal = _mm256_sub_pd(pBest, pos);
@@ -109,7 +111,7 @@ void Point::updateVelocity(double alpha, double beta, double epsilon1, double ep
             __m256d scaledTerm2 = _mm256_mul_pd(term2, betaVec);
             __m256d update = _mm256_add_pd(scaledTerm1, scaledTerm2);
             vel = _mm256_add_pd(vel, update);
-            _mm256_storeu_pd(velocityVector.data() + i, vel);
+            _mm256_store_pd(velocityVector.data() + i, vel);
         }    
     #else
         for (size_t i = 0; i < position.size(); i++) 
@@ -131,9 +133,9 @@ void Point::enforceBounds(const std::pair<int, int>& bounds)
 
         for (size_t i = 0; i < position.size(); i += 8)
         {
-            __m512d pos = _mm512_loadu_pd(position.data() + i);
+            __m512d pos = _mm512_load_pd(position.data() + i);
             pos = _mm512d_max_pd(minBVec, _mm512_min_pd(maxBVec, pos));
-            _mm512_storeu_pd(position.data() + i, pos);
+            _mm512_store_pd(position.data() + i, pos);
         }
     #elif defined (__AVX2__)
         __m256d minBVec = _mm256_set1_pd(minBound);
@@ -141,9 +143,9 @@ void Point::enforceBounds(const std::pair<int, int>& bounds)
 
         for (size_t i = 0; i < position.size(); i += 8)
         {
-            __m256d pos = _mm256_loadu_pd(position.data() + i);
+            __m256d pos = _mm256_load_pd(position.data() + i);
             pos = _mm256_max_pd(minBVec, _mm256_min_pd(maxBVec, pos));
-            _mm256_storeu_pd(position.data() + i, pos);
+            _mm256_store_pd(position.data() + i, pos);
         }
     #else
         for(size_t i = 0; i < position.size(); i++)
@@ -162,9 +164,9 @@ void Point::clampVelocity(double maxVelocity)
 
         for (size_t i = 0; i < position.size(); i += 8) 
         {
-            __m512d vel = _mm512_loadu_pd(velocityVector.data() + i);
+            __m512d vel = _mm512_load_pd(velocityVector.data() + i);
             vel = _mm512_max_pd(minVec, _mm512_min_pd(maxVec, vel));
-            _mm512_storeu_pd(velocityVector.data() + i, vel);
+            _mm512_store_pd(velocityVector.data() + i, vel);
         }
     #elif defined(__AVX2__)
         __m256d minVec = _mm256_set1_pd(minVel);
@@ -172,9 +174,9 @@ void Point::clampVelocity(double maxVelocity)
 
         for (size_t i = 0; i < position.size(); i += 4) 
         {
-            __m256d vel = _mm256_loadu_pd(velocityVector.data() + i);
+            __m256d vel = _mm256_load_pd(velocityVector.data() + i);
             vel = _mm256_max_pd(minVec, _mm256_min_pd(maxVec, vel));
-            _mm256_storeu_pd(velocityVector.data() + i, vel);
+            _mm256_store_pd(velocityVector.data() + i, vel);
         }
   
     #else

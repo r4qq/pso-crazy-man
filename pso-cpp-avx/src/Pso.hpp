@@ -1,16 +1,14 @@
 #pragma once
 
-#include <cstddef>
 #include <cstdlib>
 #include <vector>
 #include <functional>
 #include <random>
-#include <algorithm>
 #include <chrono>
 #include <optional>
 
-#include "CustomAllignedAllocator.h"
-#include "Point.h"
+#include "CustomAllignedAllocator.hpp"
+#include "Point.hpp"
 
 
 class Pso

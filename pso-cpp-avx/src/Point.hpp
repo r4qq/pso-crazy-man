@@ -3,9 +3,8 @@
 #include <functional>
 #include <vector>
 #include <limits>
-#include <stdexcept>
 
-#include "CustomAllignedAllocator.h"
+#include "CustomAllignedAllocator.hpp"
 
 class Point 
 {

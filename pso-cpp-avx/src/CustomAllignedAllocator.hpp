@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdlib>
+#include <new>
 
 template <typename T>
 class CustomAllignedAllocator 
@@ -13,7 +14,16 @@ class CustomAllignedAllocator
         template<typename U> CustomAllignedAllocator(CustomAllignedAllocator<U>&) {};
         T* allocate(size_t n)
         {
-            return static_cast<T*>(std::aligned_alloc(alignof(T), n * sizeof(T)));
+            size_t alignment = 64;
+            size_t size = n * sizeof(T);
+
+            size_t aligned_size = (size + alignment - 1) & ~(alignment - 1);
+            void* ptr = std::aligned_alloc(alignment, aligned_size);
+            if (!ptr) 
+            {
+                throw std::bad_alloc();
+            }
+            return static_cast<T*>(ptr);
         }
 
         void deallocate(T* pointer, std::size_t)

@@ -1,7 +1,8 @@
-#include "Pso.h"
-#include "Point.h"
-#include "CustomAllignedAllocator.h"
+#include "Pso.hpp"
+#include "Point.hpp"
+#include "CustomAllignedAllocator.hpp"
 
+#include <algorithm>
 #include <cstddef>
 #include <iostream>
 #include <ostream>
