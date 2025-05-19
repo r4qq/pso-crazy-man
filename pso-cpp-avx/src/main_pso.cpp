@@ -1,5 +1,4 @@
 #include "Pso.hpp"
-#include "CustomAllignedAllocator.hpp"
 
 #include <cmath>
 #include <cstddef>
@@ -40,7 +39,7 @@ int main()
     };
 */
 
-    auto func3 = [](const std::vector<double, CustomAllignedAllocator<double>>& vars) -> double 
+    auto func3 = [](const std::vector<double>& vars) -> double 
     {
         double x1 = vars[0];
         double x2 = vars[1];
@@ -65,7 +64,7 @@ int main()
         auto pso = Pso(ALPHA, BETA, EPOCH, POINTSAMOUNT, POINTDIMENSION, BOUND, func3, SAME_GRADE_EPOCHS, 0);
         pso.setMaxVelocity((BOUND.second - BOUND.first) / 5.0); 
         
-        std::tuple<std::vector<double, CustomAllignedAllocator<double>>, double, std::chrono::duration<double>> output = pso.optimize();
+        std::tuple<std::vector<double>, double, std::chrono::duration<double>> output = pso.optimize();
         
         std::cout << "****************" << std::endl;
         std::cout << "Best position: " << std::endl;
@@ -75,7 +74,7 @@ int main()
         }
         std::cout << std::endl;
         std::cout << "Best value: " << std::get<1>(output) << std::endl;
-        std::cout << "Time elapsed: " << std::get<2>(output).count() << " s." << std::endl; 
+        std::cout << "Time elapsed: " << std::get<2>(output).count() << " s" << std::endl; 
         std::cout << "****************" << std::endl;
     }
     catch (const std::exception& e) 

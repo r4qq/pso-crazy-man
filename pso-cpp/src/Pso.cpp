@@ -133,7 +133,7 @@ std::tuple<std::vector<double>, double, std::chrono::duration<double>> Pso::opti
     return {*_globalBestPos, _globalBestVal, duration};
 }
 
-inline double Pso::getRandomDouble(double min, double max) 
+double Pso::getRandomDouble(double min, double max) 
 {
     std::uniform_real_distribution<double> distribution(min, max);
     return distribution(_randomEngine);

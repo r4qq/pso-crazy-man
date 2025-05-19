@@ -7,7 +7,6 @@
 #include <chrono>
 #include <optional>
 
-#include "CustomAllignedAllocator.hpp"
 #include "Point.hpp"
 
 
@@ -21,16 +20,16 @@ class Pso
         int pointsAmount,
         int pointDimensions,
         std::pair<double, double> bound,
-        const std::function<double(const std::vector<double, CustomAllignedAllocator<double>>&)>& funcToMinimize,
+        const std::function<double(const std::vector<double>&)>& funcToMinimize,
         int sameGradeEpochs,
         int consecutiveUnchangedEpochs);
         
-        std::tuple<std::vector<double, CustomAllignedAllocator<double>>, double, std::chrono::duration<double>> optimize(void);
+        std::tuple<std::vector<double>, double, std::chrono::duration<double>> optimize(void);
         void setMaxVelocity(double maxVel) { _maxVelocity = maxVel; }
         int getPointDimensions() const {return _pointDimensions;}
         
     private:
-        std::vector<Point, CustomAllignedAllocator<Point>> _initPoints(void);
+        std::vector<Point> _initPoints(void);
         bool updateGlobalBest(void);
         double getRandomDouble(double min, double max);
 
@@ -41,10 +40,10 @@ class Pso
         int _pointDimensions;
         int _pointRealDimensions;
         std::pair<double, double> _bound;
-        std::function<double(const std::vector<double, CustomAllignedAllocator<double>>&)> _funcToMinimize;
+        std::function<double(const std::vector<double>&)> _funcToMinimize;
         int _sameGradeEpochs;
-        std::vector<Point, CustomAllignedAllocator<Point>> _points;
-        std::optional<std::vector<double, CustomAllignedAllocator<double>>> _globalBestPos;
+        std::vector<Point> _points;
+        std::optional<std::vector<double>> _globalBestPos;
         double _globalBestVal = std::numeric_limits<double>::max();
         int _consecutiveUnchangedEpochs;
         std::mt19937 _randomEngine;

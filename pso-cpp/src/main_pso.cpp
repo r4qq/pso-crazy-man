@@ -72,7 +72,7 @@ int main()
         }
         std::cout << std::endl;
         std::cout << "Best value: " << std::get<1>(output) << std::endl;
-        std::cout << "Time elapsed: " << std::get<2>(output).count() << " s." << std::endl; 
+        std::cout << "Time elapsed: " << std::get<2>(output).count() << " s" << std::endl; 
         std::cout << "****************" << std::endl;
     }
     catch (const std::exception& e) 
