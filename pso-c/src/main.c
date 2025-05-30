@@ -71,6 +71,6 @@ int main(void)
     }
     printf("\n");
     printf("Best value: %f\n", output.bestVal);
-    printf("Time elapsed: %ld \n", output.duration);
+    printf("Time elapsed: %f \n", output.duration);
     return 0;
 }
