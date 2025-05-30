@@ -2,6 +2,7 @@
 #include "float.h"
 #include "stdlib.h"
 #include "math.h"
+#include "time.h"
 
 #include "Pso.h"
 const int EPOCH = 100;
@@ -35,6 +36,7 @@ double func3(const double* vars)
 
 int main(void)
 {
+    srand(time(NULL));
     PsoData* data = malloc(sizeof(PsoData));
 
 

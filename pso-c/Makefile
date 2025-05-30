@@ -1,5 +1,5 @@
 CC := clang
-CCFLAGS := -Wall -Werror -std=c11 -v
+CCFLAGS := -Wall -Werror -std=c11 
 LDFLAGS := -lm
 TARGET := bin/test
 
