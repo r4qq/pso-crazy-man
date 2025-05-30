@@ -4,12 +4,13 @@ Done in:
 
  - python
  - cpp
- - cpp with AVX
  - c
 
 
-In progress
+In progress:
 
+ - c with SIMD 
+ - cpp with SIMD (AVX with unalligned memory works, NEON?)
  - rust
 
 Planned implementations:
