@@ -1,3 +1,5 @@
+#include "math.h"
+
 #include "Point.h"
 
 void updatePosition(Point* point)
@@ -21,6 +23,6 @@ void doubleClamp(double* valVec, double* bounds, int tabSize)
 {
     for (int i = 0; i < tabSize; ++i) 
     {
-        valVec[i] = valVec[i] < bounds[0] ? valVec[i] : bounds[0];         
+        valVec[i] = fmax(bounds[0], fmin(valVec[i], bounds[1]));
     }
 }

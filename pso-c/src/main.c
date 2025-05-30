@@ -30,7 +30,7 @@ double func3(const double* vars)
            cos(pow(x4, 2.0)) +
            4 * pow(x5, 2.0) * pow(x6, 2.0) +
            3 * pow(x7, 2.0) * pow(x8, 2.0) +
-           2 * (pow(x1, 2.0) + pow(x2, 20.) + pow(x3, 2.0) + pow(x4, 2.0));
+           2 * (pow(x1, 2.0) + pow(x2, 2.0) + pow(x3, 2.0) + pow(x4, 2.0));
 }
 
 int main(void)
