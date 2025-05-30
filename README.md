@@ -5,6 +5,7 @@ Done in:
  - python
  - cpp
  - cpp with AVX
+ - c
 
 
 In progress
