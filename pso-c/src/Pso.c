@@ -62,7 +62,7 @@ Point** initPoints(PsoData* data)
 
 outputData optimize(PsoData* data)
 {
-    outputData* output = malloc(sizeof(outputData));
+    outputData output;
 
     clock_t start, end;
     double cpuTimeUsed;
@@ -80,7 +80,7 @@ outputData optimize(PsoData* data)
         for (int j = 0; j < data->pointsAmount; ++j) 
         {
             epsilon1 = getRandomDouble(0.0, 1.0);
-            epsilon2 = getRandomDouble(0.0, 0.1);
+            epsilon2 = getRandomDouble(0.0, 1.0);
             updateVelocity(data->points[j], data->alpha, data->beta, 
                            epsilon1, epsilon2, data->globalBestPos);
             
@@ -106,9 +106,9 @@ outputData optimize(PsoData* data)
 
     cpuTimeUsed = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-    output->bestPoint = data->globalBestPos;
-    output->bestVal = data->globalBestVal;
-    output->duration = cpuTimeUsed;
+    output.bestPoint = data->globalBestPos;
+    output.bestVal = data->globalBestVal;
+    output.duration = cpuTimeUsed;
 
-    return *output;
+    return output;
 }

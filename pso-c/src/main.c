@@ -74,5 +74,17 @@ int main(void)
     printf("\n");
     printf("Best value: %f\n", output.bestVal);
     printf("Time elapsed: %f \n", output.duration);
+ 
+
+    for (int i = 0; i < data->pointsAmount; ++i) 
+    {
+        free(data->points[i]->position); 
+        free(data->points[i]->velocityVector); 
+        free(data->points[i]->personalBest); 
+        free(data->points[i]); 
+    }
+
+    free(data->points);
+    free(data);
     return 0;
 }
