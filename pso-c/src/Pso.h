@@ -35,6 +35,6 @@ typedef struct
 
 
 Point** initPoints(PsoData* data);
-bool updateGlobalBest(PsoData* data);
-inline double getRandomDouble(double min, double max);
+static inline bool updateGlobalBest(PsoData* data);
+static inline double getRandomDouble(double min, double max);
 outputData optimize(PsoData* data);

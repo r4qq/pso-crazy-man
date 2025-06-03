@@ -6,13 +6,13 @@
 #include <time.h>
 
 
-double getRandomDouble(double min, double max)
+static inline double getRandomDouble(double min, double max)
 {
     return min + ((double)rand() / RAND_MAX * (max - min));
 }
 
 
-bool updateGlobalBest(PsoData* data)
+static inline bool updateGlobalBest(PsoData* data)
 {
     for (int i = 0; i < data->pointsAmount; ++i) 
     {
