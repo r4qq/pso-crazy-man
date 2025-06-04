@@ -5,6 +5,7 @@
 #include "time.h"
 
 #include "Pso.h"
+
 const int EPOCH = 100;
 const int POINTSAMOUNT = 2000;
 const double BOUND[] = {-10.0, 10.0};
@@ -13,6 +14,23 @@ const double BETA = 0.3;
 const int POINTDIMENSION = 8; //set to 2 for func1, to 4 for func2, 8 fo func3
 const int SAME_GRADE_EPOCHS = 10; 
 
+/*
+double func1(const double* vars)
+{
+    double x1 = vars[0];
+    double x2 = vars[1];
+    return sin(pow(x1, 4.0)) - cos(pow(x2, 2.0)) + 6 * pow(x1, 2.0) * pow(x2, 2.0);
+}
+
+double func2(const double* vars)
+{
+    double x1 = vars[0];
+    double x2 = vars[1];
+    double x3 = vars[2];
+    double x4 = vars[3];
+    return sin(pow(x1, 4.0)) - cos(pow(x2, 2.0)) + cos(pow(x3, 3.0)) + sin(pow(x4, 2.0)) + 6 * pow(x1, 2.0) * pow(x2, 2.0) + 4 * pow(x3, 2.0) * pow(x4, 2.0);
+}
+*/
 
 double func3(const double* vars)
 {

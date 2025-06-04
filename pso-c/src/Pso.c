@@ -1,10 +1,10 @@
+#include "stdio.h"
+#include "stdlib.h"
+#include "float.h"
+#include "time.h"
+
 #include "Pso.h"
 #include "Point.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <float.h>
-#include <time.h>
-
 
 static inline double getRandomDouble(double min, double max)
 {
@@ -67,9 +67,11 @@ outputData optimize(PsoData* data)
     clock_t start, end;
     double cpuTimeUsed;
     bool optimized = updateGlobalBest(data);
-    if (data->globalBestPos == NULL) 
+    if (data->globalBestPos == NULL)
+    { 
         perror("Failed to initialize global best position\n");
-
+        exit(1);
+    }
     double epsilon1 = 0.0;
     double epsilon2 = 0.0;
     printf("Starting optimization\n");
