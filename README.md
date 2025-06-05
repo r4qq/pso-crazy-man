@@ -10,7 +10,7 @@ Done in:
 In progress:
 
  - c with SIMD 
- - cpp with SIMD (AVX with unalligned memory works, NEON?)
+ - cpp with SIMD (AVX with unalligned memory works, don't know much about templates unfortunately)
  - rust
 
 Planned implementations:

@@ -6,7 +6,7 @@ Done:
 
 In progress:
 
- - ARM64 (NEON?)
+ 
 
 [original](https://github.com/r4qq/pso-crazy-man/tree/main/pso-cpp) one.
 
