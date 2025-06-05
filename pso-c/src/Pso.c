@@ -74,6 +74,7 @@ outputData optimize(PsoData* data)
     }
     double epsilon1 = 0.0;
     double epsilon2 = 0.0;
+    const double velBound[] = {-(data->maxVelocity), data->maxVelocity}; 
     printf("Starting optimization\n");
     start = clock();
 
@@ -85,9 +86,10 @@ outputData optimize(PsoData* data)
             epsilon2 = getRandomDouble(0.0, 1.0);
             updateVelocity(data->points[j], data->alpha, data->beta, 
                            epsilon1, epsilon2, data->globalBestPos);
-            
+            doubleClamp(data->points[j]->velocityVector, (double*)velBound, data->pointDimensions); //clamp velocity
             updatePosition(data->points[j]);
-            data->points[j]->grade = data->minFunc(data->points[j]->position);
+            doubleClamp(data->points[j]->position, (double*)data->bound, data->pointDimensions);    //enforce bounds
+            data->points[j]->grade = data->minFunc(data->points[j]->position);                      //evaluate point
             
         }
         optimized = updateGlobalBest(data);

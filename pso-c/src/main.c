@@ -71,7 +71,7 @@ int main(void)
         .globalBestPos = NULL,
         .globalBestVal = DBL_MAX,
         .consecutiveUnchangedEpochs = 0,
-        .maxVelocity = 0.0,
+        .maxVelocity = 4.0,
         .hasValidSolution = false
     };   
 
