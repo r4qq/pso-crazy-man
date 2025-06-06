@@ -30,7 +30,8 @@ typedef struct
 {
     double* bestPoint;
     double bestVal;
-    double duration;  
+    double duration;
+    int epochRun;  
 }outputData;
 
 

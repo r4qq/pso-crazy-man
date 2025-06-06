@@ -52,7 +52,7 @@ Point** initPoints(PsoData* data)
         
         for (int j = 0; j < data->pointDimensions; ++j)
         {
-            points[i]->position[j] = getRandomDouble(data->bound[0], data->bound[1]);
+            points[i]->position[j] = getRandomDouble(-1*((data->maxVelocity)/2.0), ((data->maxVelocity)/2.0));
             points[i]->personalBest[j] = points[i]->position[j];
         }
         points[i]->grade = data->minFunc(points[i]->position);
@@ -62,10 +62,11 @@ Point** initPoints(PsoData* data)
 
 outputData optimize(PsoData* data)
 {
-    outputData output;
+    outputData output = {0};
 
     clock_t start, end;
     double cpuTimeUsed;
+    int tempEpochRun = 0;
     bool optimized = updateGlobalBest(data);
     if (data->globalBestPos == NULL)
     { 
@@ -90,7 +91,6 @@ outputData optimize(PsoData* data)
             updatePosition(data->points[j]);
             doubleClamp(data->points[j]->position, (double*)data->bound, data->pointDimensions);    //enforce bounds
             data->points[j]->grade = data->minFunc(data->points[j]->position);                      //evaluate point
-            
         }
         optimized = updateGlobalBest(data);
         if(optimized)
@@ -105,6 +105,7 @@ outputData optimize(PsoData* data)
                 break;
             }
         }
+        tempEpochRun++;
     }
     end = clock();
 
@@ -113,6 +114,7 @@ outputData optimize(PsoData* data)
     output.bestPoint = data->globalBestPos;
     output.bestVal = data->globalBestVal;
     output.duration = cpuTimeUsed;
+    output.epochRun = tempEpochRun;
 
     return output;
 }

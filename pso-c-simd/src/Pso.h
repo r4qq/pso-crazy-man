@@ -31,11 +31,12 @@ typedef struct
     double* bestPoint;
     double bestVal;
     double duration;  
+    int epochRun;
 }outputData;
 
 
 Point** initPoints(PsoData* data);
 bool updateGlobalBest(PsoData* data);
 inline double getRandomDouble(double min, double max);
-outputData* optimize(PsoData* data);
+outputData optimize(PsoData* data);
 void freePoints(PsoData* data);

@@ -96,12 +96,13 @@ Point** initPoints(PsoData* data)
     return points;
 }
 
-outputData* optimize(PsoData* data)
+outputData optimize(PsoData* data)
 {
-    outputData* output = malloc(sizeof(outputData));
+    outputData output = {0};
 
     clock_t start, end;
     double cpuTimeUsed;
+    int tempEpochRun = 0;
     bool optimized = updateGlobalBest(data);
     if (data->globalBestPos == NULL) 
         perror("Failed to initialize global best position\n");
@@ -147,14 +148,16 @@ outputData* optimize(PsoData* data)
                 break;
             }
         }
+        tempEpochRun++;
     }
     end = clock();
 
     cpuTimeUsed = ((double)(end - start)) / CLOCKS_PER_SEC;
 
-    output->bestPoint = data->globalBestPos;
-    output->bestVal = data->globalBestVal;
-    output->duration = cpuTimeUsed;
+    output.bestPoint = data->globalBestPos;
+    output.bestVal = data->globalBestVal;
+    output.duration = cpuTimeUsed;
+    output.epochRun = tempEpochRun;
 
     return output;
 }

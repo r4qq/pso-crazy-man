@@ -6,8 +6,8 @@
 
 #include "Pso.h"
 
-const int EPOCH = 100;
-const int POINTSAMOUNT = 2000;
+const int EPOCH = 50;
+const int POINTSAMOUNT = 200000;
 const double BOUND[] = {-10.0, 10.0};
 const double ALPHA = 0.5;
 const double BETA = 0.3; 
@@ -92,7 +92,7 @@ int main(void)
     printf("\n");
     printf("Best value: %f\n", output.bestVal);
     printf("Time elapsed: %f \n", output.duration);
- 
+    printf("Epochs optimized: %d\n", output.epochRun); 
 
     for (int i = 0; i < data->pointsAmount; ++i) 
     {
