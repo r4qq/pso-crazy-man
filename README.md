@@ -5,14 +5,10 @@ Done in:
  - python
  - cpp
  - c
+ - c with SIMD 
 
 
 In progress:
 
- - c with SIMD 
- - cpp with SIMD (AVX with unalligned memory works, don't know much about templates unfortunately)
- - rust
-
-Planned implementations:
-
- - odin (?)
+ - cpp with SIMD (AVX with unalligned memory works, don't know much about templates unfortunately) 
+ - rust (propably neve gonna finish)
