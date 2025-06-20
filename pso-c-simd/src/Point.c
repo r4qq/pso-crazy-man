@@ -45,7 +45,7 @@ void updateVelocity(Point* point, float alpha, float beta, float epsilon1, float
             __m512d pos = _mm512_loadu_pd(point->position + i);
             __m512d vel = _mm512_loadu_pd(point->velocityVector + i);
             __m512d gBest = _mm512_loadu_pd(globalBest + i);
-            __m512d pBest = _mm512_loadu_pd(point->personalBest + i);
+            __m512d pBest = _mm512_loadu_pd(point->personalBestPosition + i);
 
 
             __m512d diffGlobal = _mm512_sub_pd(gBest, pos);
@@ -70,11 +70,11 @@ void updateVelocity(Point* point, float alpha, float beta, float epsilon1, float
             __m256d pos = _mm256_loadu_pd(point->position + i);
             __m256d vel = _mm256_loadu_pd(point->velocityVector + i);
             __m256d gBest = _mm256_loadu_pd(globalBest + i);
-            __m256d pBest = _mm256_loadu_pd(point->personalBest + i);
+            __m256d pBest = _mm256_loadu_pd(point->personalBestPosition + i);
         
             __m256d diffGlobal = _mm256_sub_pd(gBest, pos);
             __m256d diffPersonal = _mm256_sub_pd(pBest, pos);
-            __m256d term1 = _mm256_mul_pd(  diffGlobal, eps1Vec);
+            __m256d term1 = _mm256_mul_pd(diffGlobal, eps1Vec);
             __m256d term2 = _mm256_mul_pd(diffPersonal, eps2Vec);
             __m256d scaledTerm1 = _mm256_mul_pd(term1, alphaVec);
             __m256d scaledTerm2 = _mm256_mul_pd(term2, betaVec);
@@ -87,7 +87,7 @@ void updateVelocity(Point* point, float alpha, float beta, float epsilon1, float
     for (int i = 0; i < point->tabSize; ++i) 
     {
         point->velocityVector[i] += (alpha * epsilon1 * (globalBest[i] - point->position[i]) +
-                                     beta * epsilon2 * (point->personalBest[i] - point->position[i]));
+                                     beta * epsilon2 * (point->personalBestPosition[i] - point->position[i]));
     }
 
     #endif

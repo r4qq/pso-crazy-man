@@ -4,8 +4,9 @@ typedef struct
 {
     double* position;
     double* velocityVector;
-    double* personalBest;
+    double* personalBestPosition;
     double grade;
+    double personalBestGrade;
     int tabSize;
 } Point;
 

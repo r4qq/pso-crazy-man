@@ -7,16 +7,23 @@
 #include "time.h"
 #include "string.h"
 
-void freePoints(PsoData *data)
+void freePsoData(PsoData* data)
 {
-    for (int i = 0; i < data->pointsAmount; ++i) 
+    if (data->points) 
     {
-        free(data->points[i]->position);
-        free(data->points[i]->velocityVector);
-        free(data->points[i]->personalBest);
-        free(data->points[i]);
-    }
+        for (int i = 0; i < data->pointsAmount; ++i) 
+        {
+            if (data->points[i]) {
+                free(data->points[i]->position); 
+                free(data->points[i]->velocityVector); 
+                free(data->points[i]->personalBestPosition); 
+                free(data->points[i]); 
+            }
+        }
         free(data->points);
+    }
+    free(data->globalBestPos);
+    free(data);
 }
 
 double getRandomDouble(double min, double max)
@@ -25,19 +32,32 @@ double getRandomDouble(double min, double max)
 }
 
 
-bool updateGlobalBest(PsoData* data)
+bool updateBest(PsoData* data)
 {
+    bool improved = false;
     for (int i = 0; i < data->pointsAmount; ++i) 
     {
+        //personal
+        if (data->points[i]->grade < data->points[i]->personalBestGrade) 
+        {
+            memcpy(data->points[i]->personalBestPosition, data->points[i]->position, 
+                   data->pointDimensions * sizeof(double_t));
+
+            data->points[i]->personalBestGrade = data->points[i]->grade;
+        }
+
+        // global
         if (data->points[i]->grade < data->globalBestVal) 
         {
-            data->globalBestPos = data->points[i]->position;
+            memcpy(data->globalBestPos, data->points[i]->position, 
+                   data->pointDimensions * sizeof(double));
+
             data->globalBestVal = data->points[i]->grade;
             data->hasValidSolution = true;
-            return true;
+            improved = true;
         }
     }
-    return false;
+    return improved;
 }
 
 Point** initPoints(PsoData* data)
@@ -83,15 +103,18 @@ Point** initPoints(PsoData* data)
 
         points[i]->position = calloc(data->pointDimensions, sizeof(double));
         points[i]->velocityVector = calloc(data->pointDimensions, sizeof(double));
-        points[i]->personalBest = calloc(data->pointDimensions, sizeof(double));
+        points[i]->personalBestPosition = calloc(data->pointDimensions, sizeof(double));
         points[i]->tabSize = data->pointDimensions;
         
         for (int j = 0; j < data->pointDimensions; ++j)
         {
-            points[i]->position[j] = getRandomDouble(data->bound[0], data->bound[1]);
-            points[i]->personalBest[j] = points[i]->position[j];
+            points[i]->position[j] = getRandomDouble(-1*((data->maxVelocity)/2.0), 
+                                                        ((data->maxVelocity)/2.0));
+            points[i]->personalBestPosition[j] = points[i]->position[j];
         }
+
         points[i]->grade = data->minFunc(points[i]->position);
+        points[i]->personalBestGrade = points[i]->grade;
     }
     return points;
 }
@@ -103,16 +126,17 @@ outputData optimize(PsoData* data)
     clock_t start, end;
     double cpuTimeUsed;
     int tempEpochRun = 0;
-    bool optimized = updateGlobalBest(data);
+
+    bool optimized = updateBest(data);
+    
     if (data->globalBestPos == NULL) 
         perror("Failed to initialize global best position\n");
 
     double epsilon1 = 0.0;
     double epsilon2 = 0.0;
-    //double minVel = -1 * (data->maxVelocity);
-    //double maxVel = data->maxVelocity;
-    //double velTab[] = {minVel, maxVel};  
+    const double velBound[] = {-(data->maxVelocity), data->maxVelocity};  
     printf("Starting optimization\n");
+    
     start = clock();
 
     for (int i = 0; i < data->epoch; ++i) 
@@ -120,22 +144,22 @@ outputData optimize(PsoData* data)
         for (int j = 0; j < data->pointsAmount; ++j) 
         {
             epsilon1 = getRandomDouble(0.0, 1.0);
-            epsilon2 = getRandomDouble(0.0, 0.1);
+            epsilon2 = getRandomDouble(0.0, 1.0);
             updateVelocity(data->points[j], data->alpha, data->beta, 
                            epsilon1, epsilon2, data->globalBestPos);
 
-            //doubleClamp(data->points[j]->velocityVector, 
-            //    velTab, data->pointDimensions);               //clamp velocity
+            doubleClamp(data->points[j]->velocityVector, 
+                (double*)velBound, data->pointDimensions);               //clamp velocity
 
             updatePosition(data->points[j]);
             
-            //doubleClamp(data->points[j]->position, 
-            //    (double*)data->bound, data->pointDimensions); //clamp position
+            doubleClamp(data->points[j]->position, 
+                (double*)data->bound, data->pointDimensions); //clamp position
             
             data->points[j]->grade = data->minFunc(data->points[j]->position);//evaluate point
             
         }
-        optimized = updateGlobalBest(data);
+        optimized = updateBest(data);
         if(optimized)
         {
             data->consecutiveUnchangedEpochs = 0;

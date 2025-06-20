@@ -13,6 +13,23 @@ const double BETA = 0.3;
 const int POINTDIMENSION = 8; //set to 2 for func1, to 4 for func2, 8 fo func3
 const int SAME_GRADE_EPOCHS = 10; 
 
+/*
+double func1(const double* vars)
+{
+    double x1 = vars[0];
+    double x2 = vars[1];
+    return sin(pow(x1, 4.0)) - cos(pow(x2, 2.0)) + 6 * pow(x1, 2.0) * pow(x2, 2.0);
+}
+
+double func2(const double* vars)
+{
+    double x1 = vars[0];
+    double x2 = vars[1];
+    double x3 = vars[2];
+    double x4 = vars[3];
+    return sin(pow(x1, 4.0)) - cos(pow(x2, 2.0)) + cos(pow(x3, 3.0)) + sin(pow(x4, 2.0)) + 6 * pow(x1, 2.0) * pow(x2, 2.0) + 4 * pow(x3, 2.0) * pow(x4, 2.0);
+}
+*/
 
 double func3(const double* vars)
 {
@@ -59,8 +76,7 @@ int main(void)
 
     Point** newPoints = initPoints(data);
     data->points = newPoints;
-    data->globalBestPos = NULL;
-    data->globalBestVal = DBL_MAX;
+    data->globalBestPos = calloc(data->pointDimensions, sizeof(double));
 
 
     outputData output = optimize(data);
@@ -81,7 +97,7 @@ int main(void)
     {
         free(data->points[i]->position); 
         free(data->points[i]->velocityVector); 
-        free(data->points[i]->personalBest); 
+        free(data->points[i]->personalBestPosition); 
         free(data->points[i]); 
     }
 

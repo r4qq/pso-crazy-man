@@ -1,8 +1,8 @@
 #pragma once
 
-#include <math.h>
-#include <stdbool.h>
-#include <time.h>
+#include "math.h"
+#include "stdbool.h"
+#include "time.h"
 
 #include "Point.h"
 
@@ -36,7 +36,7 @@ typedef struct
 
 
 Point** initPoints(PsoData* data);
-bool updateGlobalBest(PsoData* data);
-inline double getRandomDouble(double min, double max);
+bool updateBest(PsoData* data);
+static inline double getRandomDouble(double min, double max);
 outputData optimize(PsoData* data);
-void freePoints(PsoData* data);
+void freePsoData(PsoData* data);

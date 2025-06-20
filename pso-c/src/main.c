@@ -77,8 +77,8 @@ int main(void)
 
     Point** newPoints = initPoints(data);
     data->points = newPoints;
-    data->globalBestPos = NULL;
-    data->globalBestVal = DBL_MAX;
+    data->globalBestPos = calloc(data->pointDimensions, sizeof(long));
+ 
 
 
     outputData output = optimize(data);
@@ -94,15 +94,6 @@ int main(void)
     printf("Time elapsed: %f \n", output.duration);
     printf("Epochs optimized: %d\n", output.epochRun); 
 
-    for (int i = 0; i < data->pointsAmount; ++i) 
-    {
-        free(data->points[i]->position); 
-        free(data->points[i]->velocityVector); 
-        free(data->points[i]->personalBest); 
-        free(data->points[i]); 
-    }
-
-    free(data->points);
-    free(data);
+    freePsoData(data);
     return 0;
 }

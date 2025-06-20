@@ -34,8 +34,8 @@ typedef struct
     int epochRun;  
 }outputData;
 
-
+double getRandomDouble(double min, double max);
 Point** initPoints(PsoData* data);
-static inline bool updateGlobalBest(PsoData* data);
-static inline double getRandomDouble(double min, double max);
+bool updateBest(PsoData* data);
 outputData optimize(PsoData* data);
+void freePsoData(PsoData* data);

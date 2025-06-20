@@ -16,7 +16,7 @@ $(shell mkdir -p $(OBJDIR) $(BINDIR))
 
 all: normal
 
-debug: CCFLAGS += -g -fsanitize=address,undefined,leak
+debug: CCFLAGS += -g -fsanitize=address,undefined,leak -v
 debug: $(TARGET)
 
 normal: CCFLAGS += -O2
