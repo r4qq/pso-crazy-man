@@ -10,5 +10,5 @@ Done in:
 
 In progress:
 
- - cpp with SIMD (AVX with unalligned memory works, don't know much about templates unfortunately) 
- - rust (propably neve gonna finish)
+ - cpp with SIMD (AVX with alligned memory) 
+ - rust 
