@@ -9,11 +9,11 @@ class Point
     public:
         Point(const std::vector<double>& position,
               const std::vector<double>& velocityVector);
-        void updateVelocity(double alpha, double beta, double epsilon1, double epsilon2, 
+        void updateVelocity(double alpha, double beta, double _intertia, double epsilon1, double epsilon2, 
                             const std::vector<double>& globalBest);
         void updatePosition(void);
         void evalPoint(const std::function<double(const std::vector<double>&)>& funcToMinimize);
-        void enforceBounds(const std::pair<int, int>& bounds);
+        void enforceBounds(const std::pair<double, double>& bounds);
         void clampVelocity(double maxVelocity);
         
         const std::vector<double>& getPosition() const { return position; }

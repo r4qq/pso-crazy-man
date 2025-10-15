@@ -57,7 +57,7 @@ void Point::updatePosition()
     #endif
 }
 
-void Point::updateVelocity(double alpha, double beta, double epsilon1, double epsilon2, 
+void Point::updateVelocity(double alpha, double beta, double interia, double epsilon1, double epsilon2, 
                            const std::vector<double>& globalBest)
 {
    #ifdef __AVX512F__
@@ -65,6 +65,7 @@ void Point::updateVelocity(double alpha, double beta, double epsilon1, double ep
     __m512d eps2Vec = _mm512_set1_pd(epsilon2);
     __m512d alphaVec = _mm512_set1_pd(alpha);
     __m512d betaVec = _mm512_set1_pd(beta);
+    __m512d interia = _mm512_set1_pd(interia);
     
     for (size_t i = 0; i < position.size(); i += 8)
     {
@@ -81,6 +82,7 @@ void Point::updateVelocity(double alpha, double beta, double epsilon1, double ep
         __m512d scaledTerm1 = _mm512_mul_pd(term1, alphaVec);
         __m512d scaledTerm2 = _mm512_mul_pd(term2, betaVec);
         __m512d update = _mm512_add_pd(scaledTerm1, scaledTerm2);
+        vel = _mm512_mul_pd(vel, interia);
         vel = _mm512_add_pd(vel, update);
         _mm512_storeu_pd(velocityVector.data() + i, vel);
     }
@@ -90,6 +92,7 @@ void Point::updateVelocity(double alpha, double beta, double epsilon1, double ep
         __m256d eps2Vec = _mm256_set1_pd(epsilon2);
         __m256d alphaVec = _mm256_set1_pd(alpha);
         __m256d betaVec = _mm256_set1_pd(beta);
+        __m256d intertia = _mm256_set1_pd(interia);
 
         for (size_t i = 0; i < position.size(); i += 4) 
         {
@@ -105,19 +108,20 @@ void Point::updateVelocity(double alpha, double beta, double epsilon1, double ep
             __m256d scaledTerm1 = _mm256_mul_pd(term1, alphaVec);
             __m256d scaledTerm2 = _mm256_mul_pd(term2, betaVec);
             __m256d update = _mm256_add_pd(scaledTerm1, scaledTerm2);
+            vel = _mm256_mul_pd(vel, intertia);
             vel = _mm256_add_pd(vel, update);
             _mm256_storeu_pd(velocityVector.data() + i, vel);
         }    
     #else
         for (size_t i = 0; i < position.size(); i++) 
         {
-            velocityVector[i] += (alpha * epsilon1 * (globalBest[i] - position[i]) +
+            velocityVector[i] = velocityVector[i] * interia + (alpha * epsilon1 * (globalBest[i] - position[i]) +
                                 beta * epsilon2 * (personalBest[i] - position[i]));
         }
     #endif
 }
 
-void Point::enforceBounds(const std::pair<int, int>& bounds)
+void Point::enforceBounds(const std::pair<double, double>& bounds)
 {
     double minBound = static_cast<double>(bounds.first);
     double maxBound = static_cast<double>(bounds.second);
@@ -136,7 +140,7 @@ void Point::enforceBounds(const std::pair<int, int>& bounds)
         __m256d minBVec = _mm256_set1_pd(minBound);
         __m256d maxBVec = _mm256_set1_pd(maxBound);
 
-        for (size_t i = 0; i < position.size(); i += 8)
+        for (size_t i = 0; i < position.size(); i += 4)
         {
             __m256d pos = _mm256_loadu_pd(position.data() + i);
             pos = _mm256_max_pd(minBVec, _mm256_min_pd(maxBVec, pos));
