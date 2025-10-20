@@ -41,7 +41,7 @@ impl<'a> Pso<'a>
         }
     }
 
-    pub fn initPoints(&mut self)
+    pub fn init_points(&mut self)
     {
         let mut rng = rng(); 
         let distrPos = Uniform::new(self.bounds.0, self.bounds.1).expect("Invalid bounds: lower must be less than upper");

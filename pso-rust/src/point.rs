@@ -19,7 +19,7 @@ impl Point
         }
     }    
 
-    pub fn evalPoint(&mut self, func: &dyn Fn(&[f64]) -> f64)
+    pub fn eval_point(&mut self, func: &dyn Fn(&[f64]) -> f64)
     {
         let currentGrade = func(&self.position);
 
@@ -30,7 +30,7 @@ impl Point
         }
     }
 
-    pub fn updatePosition(&mut self)
+    pub fn update_position(&mut self)
     {
         for (pos, vel) in self.position.iter_mut().zip(self.velocityVector.iter())
         {
@@ -38,7 +38,7 @@ impl Point
         }
     }
 
-    pub fn updateVelocity(&mut self, alpha: f64, beta: f64, epsilon1: f64, epsilon2: f64, globalBest: &Vec<f64>)
+    pub fn update_velocity(&mut self, alpha: f64, beta: f64, epsilon1: f64, epsilon2: f64, globalBest: &Vec<f64>)
     {
         for i in 0..self.velocityVector.len()
         {
@@ -47,7 +47,7 @@ impl Point
         }
     }
 
-    pub fn enforceBounds(&mut self, bounds: (f64, f64))
+    pub fn enforce_bounds(&mut self, bounds: (f64, f64))
     {
         for i in 0..self.velocityVector.len()
         {

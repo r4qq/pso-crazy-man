@@ -1,7 +1,3 @@
-#![allow(non_snake_case)] // Disabling snake case warnings
-
-
-
 mod point;
 mod pso;
 
