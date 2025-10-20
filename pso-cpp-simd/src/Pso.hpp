@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdlib>
 #include <vector>
 #include <functional>
 #include <random>
@@ -15,7 +14,8 @@ class Pso
     public:
         Pso(
         float alpha,
-        float beta,        
+        float beta,
+        float interia,   
         int epoch,
         int pointsAmount,
         int pointDimensions,
@@ -35,6 +35,7 @@ class Pso
 
         float _alpha;
         float _beta;
+        float _intertia;
         int _epoch;
         int _pointsAmount;
         int _pointDimensions;

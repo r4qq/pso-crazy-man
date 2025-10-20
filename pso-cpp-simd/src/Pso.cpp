@@ -14,7 +14,8 @@
 
 Pso::Pso(
     float alpha,
-    float beta,        
+    float beta,
+    float interia,        
     int epoch,
     int pointsAmount,
     int pointDimensions,
@@ -26,6 +27,7 @@ Pso::Pso(
     :
         _alpha(alpha),
         _beta(beta),
+        _intertia(interia),
         _epoch(epoch),
         _pointsAmount(pointsAmount),
         _pointDimensions(pointDimensions),
@@ -45,7 +47,7 @@ Pso::Pso(
 
 std::vector<Point> Pso::_initPoints(void)
 {
-    std::uniform_int_distribution<> distrPoints(_bound.first, _bound.second);
+    std::uniform_real_distribution<> distrPoints(_bound.first, _bound.second);
     std::uniform_real_distribution<> distrVal(-1.0, 1.0);
     
     std::vector<Point> points;
@@ -136,11 +138,12 @@ std::tuple<std::vector<double>, double, std::chrono::duration<double>> Pso::opti
             epsilon1 = getRandomDouble(0.0, 1.0);
             epsilon2 = getRandomDouble(0.0, 1.0);
 
-            point.updateVelocity(_alpha, _beta, epsilon1, epsilon2, *_globalBestPos);
+            point.updateVelocity(_alpha, _beta, _intertia, epsilon1, epsilon2, *_globalBestPos);
             point.clampVelocity(_maxVelocity);
             point.updatePosition();
             point.enforceBounds(_bound);
             point.evalPoint(_funcToMinimize);
+            
         }
 
         optimized = updateGlobalBest();
@@ -157,6 +160,8 @@ std::tuple<std::vector<double>, double, std::chrono::duration<double>> Pso::opti
                 break;
             }
         }
+
+        //std::cout << "Epoch " << i << ": Best value = " << _globalBestVal << std::endl;
     }
     
     auto endTime = std::chrono::high_resolution_clock::now();

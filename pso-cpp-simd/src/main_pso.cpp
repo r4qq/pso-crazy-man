@@ -1,19 +1,21 @@
 #include "Pso.hpp"
 
-#include <cmath>
+//#include <cmath>
 #include <cstddef>
 #include <iostream>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-constexpr int EPOCH = 100;
-constexpr int POINTSAMOUNT = 2000;
-constexpr std::pair<double , double> BOUND = {-10.0, 10.0};
-constexpr float ALPHA = 0.5;
-constexpr float BETA = 0.3; 
-constexpr int POINTDIMENSION = 8; //set to 2 for func1, to 4 for func2, 8 fo func3
-constexpr int SAME_GRADE_EPOCHS = 10; 
+constexpr int EPOCH = 1000;
+constexpr int POINTSAMOUNT = 50;
+constexpr std::pair<double , double> BOUND = {-100.0, 100.0};
+constexpr float ALPHA = 1.5;
+constexpr float BETA = 1.5; 
+constexpr int POINTDIMENSION = 50; //set to 2 for func1, to 4 for func2, 8 fo func3
+constexpr int SAME_GRADE_EPOCHS = EPOCH;
+constexpr float INTERTIA = 1.0;
+constexpr float MAXVELOCITY = 100.0;
 
 int main()
 {
@@ -38,7 +40,7 @@ int main()
             + 4 * (std::pow(z, 2)) * (std::pow(w, 2));
     };
 */
-
+/*
     auto func3 = [](const std::vector<double>& vars) -> double 
     {
         double x1 = vars[0];
@@ -58,11 +60,22 @@ int main()
             3 * std::pow(x7, 2) * std::pow(x8, 2) +
             2 * (std::pow(x1, 2) + std::pow(x2, 2) + std::pow(x3, 2) + std::pow(x4, 2));
     };
+*/
+
+    auto func4 = [](const std::vector<double>& vars) -> double
+    {
+        double sum = 0;
+        for (size_t i = 0; i < POINTDIMENSION; i++) 
+        {
+            sum += vars[i] * vars[i]; 
+        }
+        return sum;
+    };
 
     try 
     {
-        auto pso = Pso(ALPHA, BETA, EPOCH, POINTSAMOUNT, POINTDIMENSION, BOUND, func3, SAME_GRADE_EPOCHS, 0);
-        pso.setMaxVelocity((BOUND.second - BOUND.first) / 5.0); 
+        auto pso = Pso(ALPHA, BETA, INTERTIA, EPOCH, POINTSAMOUNT, POINTDIMENSION, BOUND, func4, SAME_GRADE_EPOCHS, 0);
+        pso.setMaxVelocity(MAXVELOCITY); 
         
         std::tuple<std::vector<double>, double, std::chrono::duration<double>> output = pso.optimize();
         
