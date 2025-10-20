@@ -1,6 +1,6 @@
 #include "Pso.hpp"
 
-#include <cmath>
+//#include <cmath>
 #include <cstddef>
 #include <iostream>
 #include <tuple>
@@ -12,10 +12,10 @@ constexpr int POINTSAMOUNT = 50;
 constexpr std::pair<double , double> BOUND = {-100.0, 100.0};
 constexpr float ALPHA = 1.5;
 constexpr float BETA = 1.5; 
-constexpr int POINTDIMENSION = 20; //set to 2 for func1, to 4 for func2, 8 fo func3
+constexpr int POINTDIMENSION = 50; //set to 2 for func1, to 4 for func2, 8 fo func3
 constexpr int SAME_GRADE_EPOCHS = EPOCH;
-constexpr float INTERTIA = 0.7;
-constexpr float MAXVELOCITY = 10.0;
+constexpr float INTERTIA = 1.0;
+constexpr float MAXVELOCITY = 100.0;
 
 int main()
 {
@@ -61,12 +61,13 @@ int main()
             2 * (std::pow(x1, 2) + std::pow(x2, 2) + std::pow(x3, 2) + std::pow(x4, 2));
     };
 */
+
     auto func4 = [](const std::vector<double>& vars) -> double
     {
         double sum = 0;
         for (size_t i = 0; i < POINTDIMENSION; i++) 
         {
-            sum += pow(vars[i], 2); 
+            sum += vars[i] * vars[i]; 
         }
         return sum;
     };

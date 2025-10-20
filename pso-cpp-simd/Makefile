@@ -1,5 +1,12 @@
 CXX := clang++
 CXXFLAGS := -Wall -Werror -std=c++17 -march=native
+
+ifeq ($(CXX),clang++)
+    CXXFLAGS += -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize
+else ifeq ($(CXX),g++)
+    CXXFLAGS += -fopt-info-vec -fopt-info-vec-missed
+endif
+
 LDFLAGS := 
 TARGET := bin/test
 
@@ -16,7 +23,7 @@ $(shell mkdir -p $(OBJDIR) $(BINDIR))
 
 all: normal
 
-debug: CXXFLAGS += -g -fsanitize=address,undefined,leak
+debug: CXXFLAGS += -g -fsanitize=address,undefined,leak 
 debug: $(TARGET)
 
 normal: CXXFLAGS += -O2 
