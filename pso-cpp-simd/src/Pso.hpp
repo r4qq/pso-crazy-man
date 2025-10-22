@@ -24,7 +24,7 @@ class Pso
         int sameGradeEpochs,
         int consecutiveUnchangedEpochs);
         
-        std::tuple<std::vector<double>, double, std::chrono::duration<double>> optimize(void);
+        std::tuple<std::vector<double>, double, std::chrono::duration<double>, int> optimize(void);
         void setMaxVelocity(double maxVel) { _maxVelocity = maxVel; }
         int getPointDimensions() const {return _pointDimensions;}
         

@@ -1,5 +1,12 @@
 CC := clang
 CCFLAGS := -Wall -Werror -std=c11 -march=native
+
+ifeq ($(CC),clang)
+    CCFLAGS += -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize
+else ifeq ($(CC),gcc)
+    CCFLAGS += -fopt-info-vec -fopt-info-vec-missed
+endif
+
 LDFLAGS := -lm
 TARGET := bin/test
 
@@ -16,7 +23,7 @@ $(shell mkdir -p $(OBJDIR) $(BINDIR))
 
 all: normal
 
-debug: CCFLAGS += -g -fsanitize=address,undefined,leak -v
+debug: CCFLAGS += -g -fsanitize=address,undefined,leak 
 debug: $(TARGET)
 
 normal: CCFLAGS += -O2

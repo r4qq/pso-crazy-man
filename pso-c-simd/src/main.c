@@ -5,13 +5,14 @@
 #include "time.h"
 
 #include "Pso.h"
-const int EPOCH = 100;
-const int POINTSAMOUNT = 2000;
-const double BOUND[] = {-10.0, 10.0};
-const double ALPHA = 0.5;
-const double BETA = 0.3; 
+const int EPOCH = 1000;
+const int POINTSAMOUNT = 50;
+const double BOUND[] = {-1000.0, 1000.0};
+const double ALPHA = 2.0;
+const double BETA = 1.0; 
 const int POINTDIMENSION = 8; //set to 2 for func1, to 4 for func2, 8 fo func3
 const int SAME_GRADE_EPOCHS = 10; 
+const double INTERTIA  = 0.7;
 
 /*
 double func1(const double* vars)
@@ -71,7 +72,8 @@ int main(void)
         .globalBestVal = DBL_MAX,
         .consecutiveUnchangedEpochs = 0,
         .maxVelocity = 4.0,
-        .hasValidSolution = false
+        .hasValidSolution = false,
+        .intertia = INTERTIA
     };   
 
     Point** newPoints = initPoints(data);
@@ -101,6 +103,7 @@ int main(void)
         free(data->points[i]); 
     }
 
+    free(data->globalBestPos);
     free(data->points);
     free(data);
     return 0;

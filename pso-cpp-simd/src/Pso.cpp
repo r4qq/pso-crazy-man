@@ -118,7 +118,7 @@ bool Pso::updateGlobalBest(void)
     return false;
 }
 
-std::tuple<std::vector<double>, double, std::chrono::duration<double>> Pso::optimize(void)
+std::tuple<std::vector<double>, double, std::chrono::duration<double>, int> Pso::optimize(void)
 {
     auto optimized = updateGlobalBest();
     if (!_globalBestPos.has_value()) 
@@ -172,7 +172,7 @@ std::tuple<std::vector<double>, double, std::chrono::duration<double>> Pso::opti
         throw std::runtime_error("No valid solution found during optimization");
     }
     
-    return {*_globalBestPos, _globalBestVal, duration};
+    return {*_globalBestPos, _globalBestVal, duration, _consecutiveUnchangedEpochs};
 }
 
 double Pso::getRandomDouble(double min, double max) 

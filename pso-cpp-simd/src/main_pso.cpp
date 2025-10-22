@@ -1,6 +1,6 @@
 #include "Pso.hpp"
 
-//#include <cmath>
+#include <cmath>
 #include <cstddef>
 #include <iostream>
 #include <tuple>
@@ -9,13 +9,13 @@
 
 constexpr int EPOCH = 1000;
 constexpr int POINTSAMOUNT = 50;
-constexpr std::pair<double , double> BOUND = {-100.0, 100.0};
-constexpr float ALPHA = 1.5;
-constexpr float BETA = 1.5; 
-constexpr int POINTDIMENSION = 50; //set to 2 for func1, to 4 for func2, 8 fo func3
+constexpr std::pair<double , double> BOUND = {-1000.0, 1000.0};
+constexpr float ALPHA = 2.0;
+constexpr float BETA = 1.0; 
+constexpr int POINTDIMENSION = 8; //set to 2 for func1, to 4 for func2, 8 fo func3
 constexpr int SAME_GRADE_EPOCHS = EPOCH;
-constexpr float INTERTIA = 1.0;
-constexpr float MAXVELOCITY = 100.0;
+constexpr float INTERTIA = 0.7;
+constexpr float MAXVELOCITY = 10.0;
 
 int main()
 {
@@ -40,7 +40,7 @@ int main()
             + 4 * (std::pow(z, 2)) * (std::pow(w, 2));
     };
 */
-/*
+
     auto func3 = [](const std::vector<double>& vars) -> double 
     {
         double x1 = vars[0];
@@ -60,8 +60,8 @@ int main()
             3 * std::pow(x7, 2) * std::pow(x8, 2) +
             2 * (std::pow(x1, 2) + std::pow(x2, 2) + std::pow(x3, 2) + std::pow(x4, 2));
     };
-*/
 
+/*
     auto func4 = [](const std::vector<double>& vars) -> double
     {
         double sum = 0;
@@ -71,13 +71,13 @@ int main()
         }
         return sum;
     };
-
+*/
     try 
     {
-        auto pso = Pso(ALPHA, BETA, INTERTIA, EPOCH, POINTSAMOUNT, POINTDIMENSION, BOUND, func4, SAME_GRADE_EPOCHS, 0);
+        auto pso = Pso(ALPHA, BETA, INTERTIA, EPOCH, POINTSAMOUNT, POINTDIMENSION, BOUND, func3, SAME_GRADE_EPOCHS, 0);
         pso.setMaxVelocity(MAXVELOCITY); 
         
-        std::tuple<std::vector<double>, double, std::chrono::duration<double>> output = pso.optimize();
+        std::tuple<std::vector<double>, double, std::chrono::duration<double>, int> output = pso.optimize();
         
         std::cout << "****************" << std::endl;
         std::cout << "Best position: " << std::endl;
@@ -88,6 +88,7 @@ int main()
         std::cout << std::endl;
         std::cout << "Best value: " << std::get<1>(output) << std::endl;
         std::cout << "Time elapsed: " << std::get<2>(output).count() << " s" << std::endl; 
+        std::cout << "Epochs optimized: " << std::get<3>(output) << std::endl;
         std::cout << "****************" << std::endl;
     }
     catch (const std::exception& e) 

@@ -76,7 +76,7 @@ Point** initPoints(PsoData* data)
         {
             data->pointDimensions = ((data->pointDimensions + 7) / 8) * 8; // Pad to next multiple of 8
         }
-    strcat(message, "AVX-512F");
+        strcat(message, "AVX-512F");
 
     #elif defined(__AVX2__)
         if (data->pointDimensions % 4 != 0) 
@@ -146,7 +146,7 @@ outputData optimize(PsoData* data)
             epsilon1 = getRandomDouble(0.0, 1.0);
             epsilon2 = getRandomDouble(0.0, 1.0);
             updateVelocity(data->points[j], data->alpha, data->beta, 
-                           epsilon1, epsilon2, data->globalBestPos);
+                           epsilon1, epsilon2, data->globalBestPos, data->intertia);
 
             doubleClamp(data->points[j]->velocityVector, 
                 (double*)velBound, data->pointDimensions);               //clamp velocity
