@@ -32,13 +32,15 @@ void updatePosition(Point* point)
 
 
 
-void updateVelocity(Point* point, float alpha, float beta, float epsilon1, float epsilon2, double *globalBest)
+void updateVelocity(Point* point, float alpha, float beta, float epsilon1, float epsilon2, 
+                    double *globalBest, double intertia)
 {
     #ifdef __AVX512F__
         __m512d eps1Vec = _mm512_set1_pd(epsilon1);
         __m512d eps2Vec = _mm512_set1_pd(epsilon2);
         __m512d alphaVec = _mm512_set1_pd(alpha);
         __m512d betaVec = _mm512_set1_pd(beta);
+        __m512d intertiaVec = _mm512_set1_pd(intertia);
 
         for (size_t i = 0; i < point->tabSize; i += 8)
         {
@@ -55,6 +57,7 @@ void updateVelocity(Point* point, float alpha, float beta, float epsilon1, float
             __m512d scaledTerm1 = _mm512_mul_pd(term1, alphaVec);
             __m512d scaledTerm2 = _mm512_mul_pd(term2, betaVec);
             __m512d update = _mm512_add_pd(scaledTerm1, scaledTerm2);
+            vel = _mm512_mul_pd(vel, intertiaVec);
             vel = _mm512_add_pd(vel, update);
             _mm512_storeu_pd(point->velocityVector + i, vel);
         }
@@ -64,6 +67,7 @@ void updateVelocity(Point* point, float alpha, float beta, float epsilon1, float
         __m256d eps2Vec = _mm256_set1_pd(epsilon2);
         __m256d alphaVec = _mm256_set1_pd(alpha);
         __m256d betaVec = _mm256_set1_pd(beta);
+        __m256d intertiaVec = _mm256_set1_pd(intertia);
 
         for (size_t i = 0; i < point->tabSize; i += 4) 
         {
@@ -79,6 +83,7 @@ void updateVelocity(Point* point, float alpha, float beta, float epsilon1, float
             __m256d scaledTerm1 = _mm256_mul_pd(term1, alphaVec);
             __m256d scaledTerm2 = _mm256_mul_pd(term2, betaVec);
             __m256d update = _mm256_add_pd(scaledTerm1, scaledTerm2);
+            vel = _mm256_mul_pd(vel, intertiaVec);
             vel = _mm256_add_pd(vel, update);
             _mm256_storeu_pd(point->velocityVector + i, vel);
         } 

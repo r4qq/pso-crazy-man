@@ -24,6 +24,7 @@ typedef struct
         int consecutiveUnchangedEpochs;
         double maxVelocity; 
         bool hasValidSolution;
+        double intertia;
 }PsoData;
 
 typedef struct
