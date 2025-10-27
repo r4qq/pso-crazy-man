@@ -1,6 +1,4 @@
 CC := clang
-CCFLAGS := -Wall -Werror -std=c11 
-LDFLAGS := -lm
 TARGET := bin/test
 
 SRCDIR := src
