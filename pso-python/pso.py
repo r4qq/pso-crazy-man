@@ -14,6 +14,7 @@ BETA = 0.3
 POINT_DIMENSION = 8
 INERTIA = 0.7
 SAME_GRADE_EPOCHS = 10
+MAX_VELOCITY = 10.0
 
 class Point:
     def __init__(self, position: List[float], velocity_vector: List[float]) -> None:
@@ -38,10 +39,13 @@ class Point:
             self.personal_best = self.position
             self.grade = current_grade  
 
+    def clamp_velocity(self, max_velocity: float) -> None:
+        self.velocity_vector = [max(-1 * max_velocity, min(max_velocity, self.velocity_vector[i])) for i in range(len(self.velocity_vector))]
+
 class Algo:
     def __init__(self, epoch: int, points_Amount: int, bound: List[float],
                     alpha: float, beta: float, func_to_minimize: Callable, 
-                    same_grade_epochs: int, inertia: float) -> None:
+                    same_grade_epochs: int, inertia: float, max_velocity: float) -> None:
         self.epoch = epoch
         self.points_Amount = points_Amount
         self.bound = bound
@@ -55,6 +59,7 @@ class Algo:
         self.best_grades_history = []
         self.consecutive_unchanged_epochs = 0
         self.inertia = inertia
+        self.max_velocity = max_velocity
 
     def _initPoints(self) -> None:
         points = []
@@ -82,6 +87,7 @@ class Algo:
             self.best_grades_history.append(self.global_best_val)
             for point in self.points:
                 point.update_velocity(self.alpha, self.beta, self.global_best_pos, self.inertia)
+                point.clamp_velocity(self.max_velocity)
                 point.update_position()
                 point.eval_point(self.func_to_minimize)
 
@@ -114,7 +120,7 @@ if __name__ == "__main__":
                3 * math.pow(x7, 2) * math.pow(x8, 2) +  
                2 * math.pow(x1, 2) + math.pow(x2, 2) +  math.pow(x3, 2) +  math.pow(x4, 2)) 
 
-    pso = Algo(EPOCH, POINTS_AMOUNT, BOUND, ALPHA, BETA, func_to_minimize2, SAME_GRADE_EPOCHS, INERTIA)
+    pso = Algo(EPOCH, POINTS_AMOUNT, BOUND, ALPHA, BETA, func_to_minimize2, SAME_GRADE_EPOCHS, INERTIA, MAX_VELOCITY)
     best_pos, best_val = pso.optimize()
 
     print("-------------")
