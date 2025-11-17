@@ -17,21 +17,20 @@ SAME_GRADE_EPOCHS = 10
 MAX_VELOCITY = 10.0
 
 class Point:
-    def __init__(self, position: List[float], velocity_vector: List[float]) -> None:
+    def __init__(self, position: np.ndarray, velocity_vector: np.ndarray) -> None:
         self.position = position
         self.velocity_vector = velocity_vector
         self.personal_best = position
         self.grade = float('inf')
 
-    def update_velocity(self, alpha: float, beta: float, globalBest: List[float], inertia: float) -> None:
+    def update_velocity(self, alpha: float, beta: float, global_best: np.ndarray, inertia: float) -> None:
         epsilon1, epsilon2 = random.random(), random.random()
-        for i in range(len(self.velocity_vector)):
-            self.velocity_vector[i] = self.velocity_vector[i] * inertia + (alpha * epsilon1 * (globalBest[i] - self.position[i]) +
-                                        beta * epsilon2 * (self.personal_best[i] - self.position[i]))
-
+        cognitive = alpha * epsilon1 * (self.global_best - self.position)
+        social = beta * epsilon2 * (self.personal_best - self.position)
+        self.velocity_vector = inertia * self.velocity_vector + cognitive + social
+        
     def update_position(self) -> None:
-        for i in range(len(self.position)):
-            self.position[i] += self.velocity_vector[i]
+        self.position += self.velocity_vector
 
     def eval_point(self, func: Callable) -> None:
         current_grade = func(self.position)
@@ -40,7 +39,8 @@ class Point:
             self.grade = current_grade  
 
     def clamp_velocity(self, max_velocity: float) -> None:
-        self.velocity_vector = [max(-1 * max_velocity, min(max_velocity, self.velocity_vector[i])) for i in range(len(self.velocity_vector))]
+        self.velocity_vector = [max(-1 * max_velocity, min(max_velocity, v)) for v in self.velocity_vector]
+        self.velocity_vector.clip(self.velocity_vector, -max_velocity, max_velocity)
 
 class Algo:
     def __init__(self, epoch: int, points_Amount: int, bound: List[float],
@@ -71,7 +71,7 @@ class Algo:
             points.append(point)
         return points
 
-    def _updateGlobalBest(self) -> bool:
+    def _updateGlobal_best(self) -> bool:
         tempPoint = min(self.points, key=lambda p: p.grade)
         if tempPoint.grade < self.global_best_val:
             self.global_best_val = tempPoint.grade
@@ -83,7 +83,7 @@ class Algo:
         start_time = time.time()
 
         for eepoch in range(self.epoch):
-            optimized = self._updateGlobalBest()
+            optimized = self._updateGlobal_best()
             self.best_grades_history.append(self.global_best_val)
             for point in self.points:
                 point.update_velocity(self.alpha, self.beta, self.global_best_pos, self.inertia)
