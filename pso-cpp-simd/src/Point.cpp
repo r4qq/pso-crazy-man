@@ -68,7 +68,7 @@ void Point::updateVelocity(double alpha, double beta, double intertia, double ep
     __m512d eps2Vec = _mm512_set1_pd(epsilon2);
     __m512d alphaVec = _mm512_set1_pd(alpha);
     __m512d betaVec = _mm512_set1_pd(beta);
-    __m512d intertiaVec = _mm512_set1_pdd(intertia);
+    __m512d intertiaVec = _mm512_set1_pd(intertia);
     
     for (size_t i = 0; i < position.size(); i += 8)
     {

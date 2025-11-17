@@ -1,5 +1,6 @@
 #include "Pso.hpp"
 #include "Point.hpp"
+#include "AllignedAllocator.hpp"
 
 #include <algorithm>
 #include <cstddef>
