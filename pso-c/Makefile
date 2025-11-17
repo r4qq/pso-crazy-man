@@ -12,7 +12,7 @@ OBJS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRCS))
 
 $(shell mkdir -p $(OBJDIR) $(BINDIR))
 
-.PHONY: all debug normal fast run clean
+.PHONY: all debug normal fast run clean mem
 
 all: normal
 
@@ -38,3 +38,6 @@ run:
 clean:
 	rm -rf $(OBJDIR) $(BINDIR)
 	@echo "Clean complete"
+
+mem:
+	valgrind -s $(TARGET)
