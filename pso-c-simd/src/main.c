@@ -11,7 +11,7 @@ const double BOUND[] = {-1000.0, 1000.0};
 const double ALPHA = 2.0;
 const double BETA = 1.0; 
 const int POINTDIMENSION = 8; //set to 2 for func1, to 4 for func2, 8 fo func3
-const int SAME_GRADE_EPOCHS = 10; 
+const int SAME_GRADE_EPOCHS = EPOCH; 
 const double INTERTIA  = 0.7;
 
 /*

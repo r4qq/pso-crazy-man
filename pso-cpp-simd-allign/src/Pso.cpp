@@ -6,6 +6,7 @@
 #include <iostream>
 #include <ostream>
 #include <random>
+#include <stdalign.h>
 #include <string>
 #include <utility>
 #include <vector>
@@ -20,7 +21,7 @@ Pso::Pso(
     int pointsAmount,
     int pointDimensions,
     std::pair<double, double> bound,
-    const std::function<double(const std::vector<double>&)>& funcToMinimize,
+    const std::function<double(const std::vector<double, AlignedAllocator<double, 64>>&)>& funcToMinimize,
     int sameGradeEpochs,
     int consecutiveUnchangedEpochs
     )
@@ -79,8 +80,8 @@ std::vector<Point> Pso::_initPoints(void)
     for (int i = 0; i < _pointsAmount; i++) 
     {
         
-        std::vector<double> startPos;
-        std::vector<double> velocityVector;
+        alignas(64) std::vector<double, AlignedAllocator<double, 64>> startPos;
+        alignas(64) std::vector<double, AlignedAllocator<double, 64>> velocityVector;
         for (int j = 0; j < _pointRealDimensions; j++) 
         {
             startPos.push_back(static_cast<double>(distrPoints(_randomEngine)));
@@ -118,7 +119,7 @@ bool Pso::updateGlobalBest(void)
     return false;
 }
 
-std::tuple<std::vector<double>, double, std::chrono::duration<double>, int> Pso::optimize(void)
+std::tuple<std::vector<double, AlignedAllocator<double, 64>>, double, std::chrono::duration<double>, int> Pso::optimize(void)
 {
     auto optimized = updateGlobalBest();
     if (!_globalBestPos.has_value()) 
