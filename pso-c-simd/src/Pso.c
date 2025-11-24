@@ -62,6 +62,7 @@ bool updateBest(PsoData* data)
 
 Point** initPoints(PsoData* data)
 {
+    Point*** xpp;
     Point** points = malloc(sizeof(Point*) * data->pointsAmount);
     if (!points) 
     {
