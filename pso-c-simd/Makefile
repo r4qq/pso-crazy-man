@@ -1,5 +1,5 @@
 CC := clang
-CCFLAGS := -Wall -Werror -std=c11 -march=native
+CCFLAGS := -Wall -Werror -std=c11 
 
 ifeq ($(CC),clang)
     CCFLAGS += -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize
@@ -29,7 +29,8 @@ debug: $(TARGET)
 normal: CCFLAGS += -O2
 normal: $(TARGET)
 
-fast: CCFLAGS += -O3 -ffast-math
+fast: CCFLAGS += -O3 -ffast-math -fno-trapping-math -fno-math-errno -march=native -flto
+fast: LDFLAGS += -flto
 fast: $(TARGET)
 
 $(TARGET): $(OBJS)

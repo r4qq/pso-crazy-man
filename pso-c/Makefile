@@ -22,7 +22,7 @@ debug: $(TARGET)
 normal: CCFLAGS += -O2
 normal: $(TARGET)
 
-fast: CCFLAGS += -O3 -ffast-math
+fast: CCFLAGS += -O3 -ffast-math -march=native
 fast: $(TARGET)
 
 $(TARGET): $(OBJS)

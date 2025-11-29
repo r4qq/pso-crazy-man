@@ -1,5 +1,5 @@
 CXX := clang++
-CXXFLAGS := -Wall -Werror -std=c++17 -march=native
+CXXFLAGS := -Wall -Werror -std=c++17 
 
 ifeq ($(CXX),clang++)
     CXXFLAGS += -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize
@@ -29,7 +29,8 @@ debug: $(TARGET)
 normal: CXXFLAGS += -O2 
 normal: $(TARGET)
 
-fast: CXXFLAGS += -O3 -ffast-math 
+fast: CXXFLAGS += -O3 -ffast-math -fno-trapping-math -fno-math-errno -march=native -flto
+fast: LDFLAGS += -flto
 fast: $(TARGET)
 
 $(TARGET): $(OBJS)
