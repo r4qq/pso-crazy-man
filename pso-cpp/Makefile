@@ -22,7 +22,7 @@ debug: $(TARGET)
 normal: CXXFLAGS += -O2
 normal: $(TARGET)
 
-fast: CXXFLAGS += -O3 -ffast-math
+fast: CXXFLAGS += -O3 -ffast-math -march=native
 fast: $(TARGET)
 
 $(TARGET): $(OBJS)
