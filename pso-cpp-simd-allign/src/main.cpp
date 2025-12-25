@@ -10,8 +10,8 @@
 constexpr int EPOCH = 1000;
 constexpr int POINTSAMOUNT = 50;
 constexpr std::pair<double , double> BOUND = {-1000.0, 1000.0};
-constexpr float ALPHA = 2.0;
-constexpr float BETA = 1.0; 
+constexpr float ALPHA = 1.0;
+constexpr float BETA = 2.0; 
 constexpr int POINTDIMENSION = 8; //set to 2 for func1, to 4 for func2, 8 fo func3
 constexpr int SAME_GRADE_EPOCHS = EPOCH;
 constexpr float INTERTIA = 0.7;

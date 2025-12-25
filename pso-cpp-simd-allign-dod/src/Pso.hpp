@@ -5,6 +5,7 @@
 #include <random>
 #include <chrono>
 #include <optional>
+#include <span>
 
 #include "AllignedAllocator.hpp"
 
@@ -20,7 +21,7 @@ class Pso
             int pointsAmount,
             int pointDimensions,
             std::pair<double, double> bound,
-            const std::function<double(const std::vector<double, AlignedAllocator<double, 64>>&)>& funcToMinimize,
+            const std::function<double(std::span<const double>)>& funcToMinimize,
             int sameGradeEpochs,
             int consecutiveUnchangedEpochs
         );
@@ -49,17 +50,17 @@ class Pso
         std::vector<double, AlignedAllocator<double, 64>> _personalBests;
         std::vector<double, AlignedAllocator<double, 64>> _pointsVelocities;
         std::vector<double, AlignedAllocator<double, 64>> _grades;
-        std::pair<double, double> _bound;
-        std::function<double(const std::vector<double, AlignedAllocator<double, 64>>&)> _funcToMinimize;
+        std::pair<double, double> _bounds;
+        std::function<double(std::span<const double>)> _funcToMinimize;
         std::optional<std::vector<double, AlignedAllocator<double, 64>>> _globalBestPos;
         std::mt19937 _randomEngine;
 
         void _initPoints(void);
         bool updateGlobalBest(void);
         double getRandomDouble(double min, double max);
-        void updateVelocities();
-        void updatePositions();
-        void evalPoints();
-        void enforceBounds();
-        void clampVelocities();
+        void updateVelocities(void);
+        void updatePositions(void);
+        void evalPoints(void);
+        void enforceBounds(void);
+        void clampVelocities(void);
 };

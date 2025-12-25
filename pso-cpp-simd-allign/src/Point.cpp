@@ -82,8 +82,8 @@ void Point::updateVelocity(double alpha, double beta, double intertia, double ep
         __m512d diffPersonal = _mm512_sub_pd(pBest, pos);
         __m512d term1 = _mm512_mul_pd(diffGlobal, eps1Vec);
         __m512d term2 = _mm512_mul_pd(diffPersonal, eps2Vec);
-        __m512d scaledTerm1 = _mm512_mul_pd(term1, alphaVec);
-        __m512d scaledTerm2 = _mm512_mul_pd(term2, betaVec);
+        __m512d scaledTerm1 = _mm512_mul_pd(term1, betaVec);
+        __m512d scaledTerm2 = _mm512_mul_pd(term2, alphaVec);
         __m512d update = _mm512_add_pd(scaledTerm1, scaledTerm2);
         vel = _mm512_mul_pd(vel, intertiaVec);
         vel = _mm512_add_pd(vel, update);
@@ -108,8 +108,8 @@ void Point::updateVelocity(double alpha, double beta, double intertia, double ep
             __m256d diffPersonal = _mm256_sub_pd(pBest, pos);
             __m256d term1 = _mm256_mul_pd(  diffGlobal, eps1Vec);
             __m256d term2 = _mm256_mul_pd(diffPersonal, eps2Vec);
-            __m256d scaledTerm1 = _mm256_mul_pd(term1, alphaVec);
-            __m256d scaledTerm2 = _mm256_mul_pd(term2, betaVec);
+            __m256d scaledTerm1 = _mm256_mul_pd(term1, betaVec);
+            __m256d scaledTerm2 = _mm256_mul_pd(term2, alphaVec);
             __m256d update = _mm256_add_pd(scaledTerm1, scaledTerm2);
             vel = _mm256_mul_pd(vel, intertiaVec);
             vel = _mm256_add_pd(vel, update);

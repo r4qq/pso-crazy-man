@@ -23,7 +23,7 @@ $(shell mkdir -p $(OBJDIR) $(BINDIR))
 
 all: normal
 
-debug: CXXFLAGS += -g -fsanitize=address,undefined,leak 
+debug: CXXFLAGS += -g -fsanitize=address,undefined,leak -march=native 
 debug: $(TARGET)
 
 normal: CXXFLAGS += -O2 

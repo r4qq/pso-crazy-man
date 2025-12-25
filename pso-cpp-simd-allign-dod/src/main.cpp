@@ -6,12 +6,13 @@
 #include <tuple>
 #include <utility>
 #include <vector>
+#include <span>
 
 constexpr int EPOCH = 1000;
 constexpr int POINTSAMOUNT = 50;
 constexpr std::pair<double , double> BOUND = {-1000.0, 1000.0};
-constexpr float ALPHA = 2.0;
-constexpr float BETA = 1.0; 
+constexpr float ALPHA = 1.0;
+constexpr float BETA = 2.0; 
 constexpr int POINTDIMENSION = 8; //set to 2 for func1, to 4 for func2, 8 fo func3
 constexpr int SAME_GRADE_EPOCHS = EPOCH;
 constexpr float INTERTIA = 0.7;
@@ -20,7 +21,7 @@ constexpr float MAXVELOCITY = 10.0;
 int main()
 {
 
-    // auto func1 = [](const std::vector<double, AlignedAllocator<double, 64>>& vars) -> double 
+    // auto func1 = [](std::span<const double> vars) -> double 
     // {
     //     double x = vars[0];
     //     double y = vars[1];
@@ -28,7 +29,7 @@ int main()
     //            + 6 * (std::pow(x, 2)) * (std::pow(y, 2));
     // };
 /*
-        auto func2 = [](const std::vector<double, AlignedAllocator<double, 64>>& vars) -> double 
+        auto func2 = [](std::span<const double> vars) -> double 
     {
         double x = vars[0];
         double y = vars[1];
@@ -41,7 +42,7 @@ int main()
     };
 */
 
-    auto func3 = [](const std::vector<double, AlignedAllocator<double, 64>>& vars) -> double 
+    auto func3 = [](std::span<const double> vars) -> double 
     {
         double x1 = vars[0];
         double x2 = vars[1];
@@ -62,7 +63,7 @@ int main()
     };
 
 /*
-    auto func4 = [](const std::vector<double>& vars) -> double
+    auto func4 = [](std::span<const double> vars) -> double
     {
         double sum = 0;
         for (size_t i = 0; i < POINTDIMENSION; i++) 
