@@ -1,5 +1,5 @@
 CXX := clang++
-CXXFLAGS := -Wall -Werror -std=c++17 
+CXXFLAGS := -Wall -Werror -std=c++20 
 
 ifeq ($(CXX),clang++)
     CXXFLAGS += -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize
