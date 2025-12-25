@@ -43,6 +43,8 @@ class Pso
         double _intertia;
         double _globalBestVal = std::numeric_limits<double>::max();
         double _maxVelocity = 4.0;
+        double _epsilon1;
+        double _epsilon2;
         std::vector<double, AlignedAllocator<double, 64>> _pointsPositions;
         std::vector<double, AlignedAllocator<double, 64>> _personalBests;
         std::vector<double, AlignedAllocator<double, 64>> _pointsVelocities;
@@ -55,4 +57,9 @@ class Pso
         void _initPoints(void);
         bool updateGlobalBest(void);
         double getRandomDouble(double min, double max);
+        void updateVelocities();
+        void updatePositions();
+        void evalPoints();
+        void enforceBounds();
+        void clampVelocities();
 };

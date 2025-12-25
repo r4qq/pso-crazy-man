@@ -2,14 +2,12 @@
 #include "AllignedAllocator.hpp"
 
 #include <algorithm>
-#include <asm-generic/errno.h>
 #include <cstddef>
+#include <immintrin.h>
 #include <iostream>
 #include <iterator>
 #include <limits>
-#include <ostream>
 #include <random>
-#include <stdalign.h>
 #include <string>
 #include <utility>
 #include <vector>
@@ -48,6 +46,62 @@ Pso::Pso(
         
         _initPoints();
     }
+
+std::tuple<std::vector<double, AlignedAllocator<double, 64>>, double, std::chrono::duration<double>, int> Pso::optimize(void)
+{
+    bool optimized = updateGlobalBest();
+    if (!_globalBestPos.has_value()) 
+    {
+        throw std::runtime_error("Failed to initialize global best position");
+    }
+    
+    
+    std::cout << "Starting optimization" << std::endl;
+    auto startTime = std::chrono::high_resolution_clock::now();
+    
+    for(size_t i = 0; i < _epoch; i++)
+    {
+        for(auto& point : _points)
+        {
+            _epsilon1 = getRandomDouble(0.0, 1.0);
+            _epsilon2 = getRandomDouble(0.0, 1.0);
+
+            // point.updateVelocity(_alpha, _beta, _intertia, epsilon1, epsilon2, *_globalBestPos);
+            // point.clampVelocity(_maxVelocity);
+            // point.updatePosition();
+            // point.enforceBounds(_bound);
+            // point.evalPoint(_funcToMinimize);
+            
+        }
+
+        optimized = updateGlobalBest();
+
+        if (optimized) 
+        {
+            _consecutiveUnchangedEpochs = 0;
+        }
+        else 
+        {
+            _consecutiveUnchangedEpochs += 1;
+            if (_consecutiveUnchangedEpochs >= _sameGradeEpochs) 
+            {
+                break;
+            }
+        }
+
+        //std::cout << "Epoch " << i << ": Best value = " << _globalBestVal << std::endl;
+    }
+    
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = endTime - startTime;
+    
+    if (!_hasValidSolution) 
+    {
+        throw std::runtime_error("No valid solution found during optimization");
+    }
+    
+    return {*_globalBestPos, _globalBestVal, duration, _consecutiveUnchangedEpochs};
+}
 
 void Pso::_initPoints(void)
 {
@@ -121,65 +175,49 @@ bool Pso::updateGlobalBest(void)
     return false;
 }
 
-std::tuple<std::vector<double, AlignedAllocator<double, 64>>, double, std::chrono::duration<double>, int> Pso::optimize(void)
-{
-    bool optimized = updateGlobalBest();
-    if (!_globalBestPos.has_value()) 
-    {
-        throw std::runtime_error("Failed to initialize global best position");
-    }
-    
-    double epsilon1 = 0;
-    double epsilon2 = 0;
-    std::cout << "Starting optimization" << std::endl;
-    auto startTime = std::chrono::high_resolution_clock::now();
-    
-    for(size_t i = 0; i < _epoch; i++)
-    {
-        for(auto& point : _points)
-        {
-            epsilon1 = getRandomDouble(0.0, 1.0);
-            epsilon2 = getRandomDouble(0.0, 1.0);
-
-            point.updateVelocity(_alpha, _beta, _intertia, epsilon1, epsilon2, *_globalBestPos);
-            point.clampVelocity(_maxVelocity);
-            point.updatePosition();
-            point.enforceBounds(_bound);
-            point.evalPoint(_funcToMinimize);
-            
-        }
-
-        optimized = updateGlobalBest();
-
-        if (optimized) 
-        {
-            _consecutiveUnchangedEpochs = 0;
-        }
-        else 
-        {
-            _consecutiveUnchangedEpochs += 1;
-            if (_consecutiveUnchangedEpochs >= _sameGradeEpochs) 
-            {
-                break;
-            }
-        }
-
-        //std::cout << "Epoch " << i << ": Best value = " << _globalBestVal << std::endl;
-    }
-    
-    auto endTime = std::chrono::high_resolution_clock::now();
-    auto duration = endTime - startTime;
-    
-    if (!_hasValidSolution) 
-    {
-        throw std::runtime_error("No valid solution found during optimization");
-    }
-    
-    return {*_globalBestPos, _globalBestVal, duration, _consecutiveUnchangedEpochs};
-}
-
-double Pso::getRandomDouble(double min, double max) 
+inline double Pso::getRandomDouble(double min, double max) 
 {
     std::uniform_real_distribution<double> distribution(min, max);
     return distribution(_randomEngine);
+}
+
+void Pso::updateVelocities()
+{
+    //#if defined(__AVX512F__)
+    __m512d eps1Vec = _mm512_set1_pd(_epsilon1);
+    __m512d eps2Vec = _mm512_set1_pd(_epsilon2);
+    __m512d alphaVec = _mm512_set1_pd(_alpha);
+    __m512d betaVec = _mm512_set1_pd(_beta);
+    __m512d intertiaVec = _mm512_set1_pd(_intertia);
+    __m512d cognitiveCoef = _mm512_mul_pd(eps1Vec,alphaVec);
+    __m512d socialCoef = _mm512_mul_pd(eps2Vec, betaVec);
+
+    for (int i = 0; i < _pointsAmount; i++) 
+    {
+        for(int j = 0; j < _pointDimensions; j += 8)
+        {
+            size_t idx = (i * _pointDimensions) + j;
+
+            __m512d pos = _mm512_load_pd(&_pointsPositions[idx]);
+            __m512d vel = _mm512_load_pd(&_pointsVelocities[idx]);
+            __m512d pBest = _mm512_load_pd(&_personalBests[idx]);
+            __m512d gBest = _mm512_load_pd(_globalBestPos->data() + j); 
+
+            __m512d diffGlobal = _mm512_sub_pd(gBest, pos);
+            __m512d diffPersonal = _mm512_sub_pd(pBest, pos);
+
+            __m512d term1 = _mm512_mul_pd(diffGlobal, cognitiveCoef);
+            __m512d term2 = _mm512_mul_pd(diffPersonal, socialCoef);
+
+            __m512d update = _mm512_add_pd(term1, term2);
+
+            vel = _mm512_fmadd_pd(vel, intertiaVec, update);
+
+            _mm512_store_pd(&_pointsVelocities[idx], vel);
+        }
+    }
+    //#elif defined (__AVX2__)
+    #else
+    #endif
+
 }
