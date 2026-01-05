@@ -122,10 +122,12 @@ Point** initPoints(PsoData* data)
 
 outputData optimize(PsoData* data)
 {
-    outputData output = {0};
-
     clock_t start, end;
     double cpuTimeUsed;
+    start = clock();
+
+    outputData output = {0};
+
     int tempEpochRun = 0;
 
     bool optimized = updateBest(data);
@@ -136,9 +138,6 @@ outputData optimize(PsoData* data)
     double epsilon1 = 0.0;
     double epsilon2 = 0.0;
     const double velBound[] = {-(data->maxVelocity), data->maxVelocity};  
-    printf("Starting optimization\n");
-    
-    start = clock();
 
     for (int i = 0; i < data->epoch; ++i) 
     {
@@ -175,8 +174,8 @@ outputData optimize(PsoData* data)
         }
         tempEpochRun++;
     }
+    
     end = clock();
-
     cpuTimeUsed = ((double)(end - start)) / CLOCKS_PER_SEC;
 
     output.bestPoint = data->globalBestPos;

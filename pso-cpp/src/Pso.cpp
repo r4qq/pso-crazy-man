@@ -84,14 +84,13 @@ bool Pso::updateGlobalBest(void)
 
 std::tuple<std::vector<double>, double, std::chrono::duration<double>> Pso::optimize(void)
 {
+    auto startTime = std::chrono::high_resolution_clock::now();
+    
     auto optimized = updateGlobalBest();
     if (!_globalBestPos.has_value()) {
         throw std::runtime_error("Failed to initialize global best position");
     }
-    
-    std::cout << "Starting optimization" << std::endl;
-    auto startTime = std::chrono::high_resolution_clock::now();
-    
+        
     for(int i = 0; i < _epoch; i++)
     {
         for(auto& point : _points)
@@ -122,13 +121,13 @@ std::tuple<std::vector<double>, double, std::chrono::duration<double>> Pso::opti
         }
     }
     
-    auto endTime = std::chrono::high_resolution_clock::now();
-    auto duration = endTime - startTime;
-    
     if (!_hasValidSolution) 
     {
         throw std::runtime_error("No valid solution found during optimization");
     }
+    
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto duration = endTime - startTime;
     
     return {*_globalBestPos, _globalBestVal, duration};
 }

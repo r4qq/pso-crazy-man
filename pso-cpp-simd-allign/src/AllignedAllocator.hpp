@@ -5,12 +5,18 @@
 #include <new>
 #include <type_traits>
 
+#if defined(_WIN32) || defined(_WIN64)
+    #include <malloc.h>
+#endif
+
 inline void* portableAllocate(size_t alignment, size_t size) noexcept 
 {
-#if defined (_WIN32) || (_WIN64)
-    return _aligned_malloc(alignment, size);
+#if defined(_WIN32) || defined(_WIN64)
+    return _aligned_malloc(size, alignment);
 #elif defined (_APPLE_)
+    if(alignment < sizeof(void*)) alignment = sizeof(void*);
     void* ptr;
+
     if (posix_memalign(&ptr, alignment, size)) 
     {
         return nullptr;
@@ -23,7 +29,7 @@ inline void* portableAllocate(size_t alignment, size_t size) noexcept
 
 inline void portableDeallocate(void* ptr) noexcept
 {
-#if defined (_WIN32) || (_WIN64)
+#if defined(_WIN32) || defined(_WIN64)
     _aligned_free(ptr);
 #else
     std::free(ptr);
@@ -53,7 +59,7 @@ class AlignedAllocator
         bool operator==(const AlignedAllocator&) const noexcept {return true;}
         bool operator!=(const AlignedAllocator& a) const noexcept {return !(*this == a);}
     
-        constexpr T* allocate(size_t n) 
+        T* allocate(size_t n) 
         {
             if (n == 0)
                 return nullptr;
@@ -69,7 +75,7 @@ class AlignedAllocator
             return static_cast<T*>(p);
         }
 
-        constexpr void deallocate(T* ptr, size_t n)
+        void deallocate(T* ptr, size_t n) noexcept
         {
             portableDeallocate(ptr);
         }
