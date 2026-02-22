@@ -31,7 +31,7 @@ class Pso
     private:
         std::vector<Point> _initPoints(void);
         bool updateGlobalBest(void);
-        double getRandomDouble(double min, double max);
+        constexpr double getRandomDouble(double min, double max);
 
         float _alpha;
         float _beta;

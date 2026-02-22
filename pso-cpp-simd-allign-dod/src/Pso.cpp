@@ -2,11 +2,9 @@
 #include "AllignedAllocator.hpp"
 
 #include <algorithm>
-#include <cstddef>
 #include <immintrin.h>
 #include <iostream>
 #include <iterator>
-#include <limits>
 #include <random>
 #include <string>
 #include <utility>
@@ -46,6 +44,7 @@ Pso::Pso(
         }
         
         _initPoints();
+        evalPoints();
     }
 
 std::tuple<std::vector<double, AlignedAllocator<double, 64>>, double, std::chrono::duration<double>, int> Pso::optimize(void)
@@ -58,11 +57,8 @@ std::tuple<std::vector<double, AlignedAllocator<double, 64>>, double, std::chron
         throw std::runtime_error("Failed to initialize global best position");
     }
         
-    for(size_t i = 0; i < _epoch; i++)
+    for(int i = 0; i < _epoch; i++)
     {
-        _epsilon1 = getRandomDouble(0.0, 1.0);
-        _epsilon2 = getRandomDouble(0.0, 1.0);
-
         updateVelocities();
         clampVelocities();
         updatePositions();
@@ -123,18 +119,18 @@ void Pso::_initPoints(void)
     std::cout << message << std::endl;
     std::cout << "Vector Size: " << _pointDimensions << std::endl;
 
-    size_t totalSize = _pointsAmount * _pointDimensions;
+    int totalSize = _pointsAmount * _pointDimensions;
     std::uniform_real_distribution<> distrPoints(_bounds.first, _bounds.second);
     std::uniform_real_distribution<> distrVal(-1.0, 1.0);
 
     _pointsPositions.resize(totalSize);    
     _pointsVelocities.resize(totalSize);    
     _personalBests.resize(totalSize);
-    _grades.resize(_pointsAmount, std::numeric_limits<double>::max());
+    _grades.resize(_pointsAmount);
 
-    for (size_t i = 0 ; i < _pointsAmount; i++) 
+    for (int i = 0 ; i < _pointsAmount; i++) 
     {
-        size_t idx = i * _pointDimensions;
+        int idx = i * _pointDimensions;
         for(int j = 0; j < _pointRealDimensions; j++)
         {
             _pointsPositions[idx + j] = distrPoints(_randomEngine);
@@ -165,7 +161,7 @@ bool Pso::updateGlobalBest(void)
     return false;
 }
 
-inline double Pso::getRandomDouble(double min, double max) 
+double Pso::getRandomDouble(double min, double max) 
 {
     std::uniform_real_distribution<double> distribution(min, max);
     return distribution(_randomEngine);
@@ -191,7 +187,7 @@ void Pso::updateVelocities()
 
             for(int j = 0; j < _pointDimensions; j += 8)
             {
-                size_t idx = (i * _pointDimensions) + j;
+                int idx = (i * _pointDimensions) + j;
 
                 __m512d pos = _mm512_load_pd(&_pointsPositions[idx]);
                 __m512d vel = _mm512_load_pd(&_pointsVelocities[idx]);
@@ -228,7 +224,7 @@ void Pso::updateVelocities()
             __m256d socialCoef = _mm256_mul_pd(eps2Vec, betaVec);
             for(int j = 0; j < _pointDimensions; j += 4)
             {
-                size_t idx = (i * _pointDimensions) + j;
+                int idx = (i * _pointDimensions) + j;
 
                 __m256d pos = _mm256_load_pd(&_pointsPositions[idx]);
                 __m256d vel = _mm256_load_pd(&_pointsVelocities[idx]);
@@ -254,11 +250,11 @@ void Pso::updateVelocities()
 void Pso::updatePositions()
 {
     #if defined(__AVX512F__)
-        for (size_t i = 0; i < _pointsAmount; i++) 
+        for (int i = 0; i < _pointsAmount; i++) 
         {
-            for (size_t j = 0; j < _pointDimensions; j += 8) 
+            for (int j = 0; j < _pointDimensions; j += 8) 
             {
-                size_t idx = (i * _pointDimensions) + j;
+                int idx = (i * _pointDimensions) + j;
 
                 __m512d pos = _mm512_load_pd(&_pointsPositions[idx]);
                 __m512d vel = _mm512_load_pd(&_pointsVelocities[idx]);
@@ -267,11 +263,11 @@ void Pso::updatePositions()
             }
         }
     #elif defined(__AVX2__)
-        for (size_t i = 0; i < _pointsAmount; i++) 
+        for (int i = 0; i < _pointsAmount; i++) 
         {
-            for (size_t j = 0; j < _pointDimensions; j += 4) 
+            for (int j = 0; j < _pointDimensions; j += 4) 
             {
-                size_t idx = (i * _pointDimensions) + j;
+                int idx = (i * _pointDimensions) + j;
 
                 __m256d pos = _mm256_load_pd(&_pointsPositions[idx]);
                 __m256d vel = _mm256_load_pd(&_pointsVelocities[idx]);
@@ -288,11 +284,11 @@ void Pso::enforceBounds()
         __m512d minBVec = _mm512_set1_pd(_bounds.first);
         __m512d maxBVec = _mm512_set1_pd(_bounds.second);
 
-        for (size_t i = 0; i < _pointsAmount; i++) 
+        for (int i = 0; i < _pointsAmount; i++) 
         {
-            for (size_t j = 0; j < _pointDimensions; j += 8)
+            for (int j = 0; j < _pointDimensions; j += 8)
             {
-                size_t idx = (i * _pointDimensions) + j;
+                int idx = (i * _pointDimensions) + j;
 
                 __m512d pos = _mm512_load_pd(&_pointsPositions[idx]);
                 pos = _mm512_max_pd(minBVec, _mm512_min_pd(maxBVec, pos));
@@ -304,11 +300,11 @@ void Pso::enforceBounds()
         __m256d minBVec = _mm256_set1_pd(_bounds.first);
         __m256d maxBVec = _mm256_set1_pd(_bounds.second);
 
-        for (size_t i = 0; i < _pointsAmount; i++) 
+        for (int i = 0; i < _pointsAmount; i++) 
         {
-            for (size_t j = 0; j < _pointDimensions; j += 4)
+            for (int j = 0; j < _pointDimensions; j += 4)
             {
-                size_t idx = (i * _pointDimensions) + j;
+                int idx = (i * _pointDimensions) + j;
 
                 __m256d pos = _mm256_load_pd(&_pointsPositions[idx]);
                 pos = _mm256_max_pd(minBVec, _mm256_min_pd(maxBVec, pos));
@@ -325,11 +321,11 @@ void Pso::clampVelocities()
         __m512d minVec = _mm512_set1_pd(-_maxVelocity); //minVelocity = -1 * maxvelocity
         __m512d maxVec = _mm512_set1_pd(_maxVelocity);
 
-        for (size_t i = 0; i < _pointsAmount; i++) 
+        for (int i = 0; i < _pointsAmount; i++) 
         {
-            for (size_t j = 0; j < _pointDimensions; j += 8) 
+            for (int j = 0; j < _pointDimensions; j += 8) 
             {
-                size_t idx = (i * _pointDimensions) + j;
+                int idx = (i * _pointDimensions) + j;
 
                 __m512d vel = _mm512_load_pd(&_pointsVelocities[idx]);
                 vel = _mm512_max_pd(minVec, _mm512_min_pd(maxVec, vel));
@@ -341,13 +337,13 @@ void Pso::clampVelocities()
         __m256d minVec = _mm256_set1_pd(-_maxVelocity);
         __m256d maxVec = _mm256_set1_pd(_maxVelocity);
 
-        for (size_t i = 0; i < _pointsAmount; i++) 
+        for (int i = 0; i < _pointsAmount; i++) 
         {
-            for(size_t j = 0; j < _pointDimensions; j += 4)
+            for(int j = 0; j < _pointDimensions; j += 4)
             {
-                size_t idx = (i * _pointDimensions) + j;
+                int idx = (i * _pointDimensions) + j;
                 
-                __m256d vel = _mm256_load_pd((&_pointsVelocities[idx]);
+                __m256d vel = _mm256_load_pd(&_pointsVelocities[idx]);
                 vel = _mm256_max_pd(minVec, _mm256_min_pd(maxVec, vel));
                 
                 _mm256_store_pd(&_pointsVelocities[idx], vel);
@@ -358,9 +354,9 @@ void Pso::clampVelocities()
 
 void Pso::evalPoints()
 {
-    for (size_t i = 0; i < _pointsAmount; i++) 
+    for (int i = 0; i < _pointsAmount; i++) 
     {
-        size_t idx = i * _pointDimensions;
+        int idx = i * _pointDimensions;
 
         std::span<const double> particleView(&_pointsPositions[idx], _pointDimensions);
 

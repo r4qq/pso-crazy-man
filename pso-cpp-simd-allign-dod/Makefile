@@ -1,5 +1,14 @@
-CXX := clang++
-CXXFLAGS := -Wall -Werror -std=c++20 
+MODES := normal debug fast clean mem run
+
+ifneq ($(filter gcc,$(MAKECMDGOALS)),)
+    CXX := g++
+    COMPILER_DIR := gcc
+else
+    CXX := clang++
+    COMPILER_DIR := clang
+endif
+
+CXXFLAGS := -Wall -Werror -std=c++20
 
 ifeq ($(CXX),clang++)
     CXXFLAGS += -Rpass=loop-vectorize -Rpass-missed=loop-vectorize -Rpass-analysis=loop-vectorize
@@ -8,18 +17,28 @@ else ifeq ($(CXX),g++)
 endif
 
 LDFLAGS := 
-TARGET := bin/test
 
 SRCDIR := src
-OBJDIR := obj
-BINDIR := bin
+OBJDIR := obj/$(COMPILER_DIR)
+BINDIR := bin/$(COMPILER_DIR)
+ASMDIR := asm/$(COMPILER_DIR)
+TARGET := $(BINDIR)/test
 
 SRCS := $(wildcard $(SRCDIR)/*.cpp)
 OBJS := $(patsubst $(SRCDIR)/%.cpp,$(OBJDIR)/%.o,$(SRCS))
 
-$(shell mkdir -p $(OBJDIR) $(BINDIR))
+HAS_MODE := $(filter $(MODES),$(MAKECMDGOALS))
 
-.PHONY: all debug normal fast run clean mem
+.PHONY: clang gcc all $(MODES)
+
+ifeq ($(HAS_MODE),)
+clang gcc: normal
+else
+clang gcc:
+	@:
+endif
+
+$(shell mkdir -p $(OBJDIR) $(BINDIR) $(ASMDIR))
 
 all: normal
 
@@ -35,7 +54,7 @@ fast: $(TARGET)
 
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
-	@echo "Build complete: $@"
+	@echo "Build complete: $@ (Compiled with $(CXX))"
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
@@ -43,8 +62,12 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 run: 
 	$(TARGET)
 
+asm: $(TARGET)
+	objdump -d -C $(TARGET) > $(ASMDIR)/test.asm
+	@echo "Disassembly complete: $(ASMDIR)/test.asm"
+
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
+	rm -rf obj bin asm
 	@echo "Clean complete"
 
 mem:

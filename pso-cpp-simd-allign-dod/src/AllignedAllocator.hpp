@@ -44,9 +44,9 @@ class AlignedAllocator
         using is_always_equal = std::true_type;
 
         static_assert((Alignment & (Alignment - 1)) == 0,
-                      "Allignment must be power of 2");
+                      "Alignment must be power of 2");
         static_assert(Alignment >= alignof(T), 
-                      "Allignment must be >= allignof(T)");
+                      "Alignment must be >= allignof(T)");
 
         AlignedAllocator() noexcept = default;
         
