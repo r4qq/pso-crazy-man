@@ -10,7 +10,6 @@ This repository contains various implementations of the Particle Swarm Optimizat
 * **pso-cpp/**: Standard C++ implementation.
 * **pso-cpp-simd/**: C++ implementation optimized with SIMD instructions.
 * **pso-cpp-simd-allign/**: C++ implementation with Simd instructions and aligned memory allocation.
-* **pso-cpp-simd-allign-dod/**: C++ implementation combining SIMD, alignment, and Data-Oriented Design.
 
 ## Requirements
 
